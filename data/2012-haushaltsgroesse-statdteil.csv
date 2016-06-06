@@ -1,4 +1,4 @@
-number,stadtteil,sum,einphh,zweiphh,dreiphh,vierphh,funfphh,prohh,stadtflaecheqkm,einwohnerqkm,einwohner
+number,stadtteil,sumphh,einphh,zweiphh,dreiphh,vierphh,funfphh,prohh,stadtflaecheqkm,einwohnerqkm,einwohner
 101,Altstadt-Süd,18292,12837,3677,1011,552,215,1.45,2.36,11654,27515
 102,Neustadt-Süd,25105,17078,5115,1661,918,333,1.5,2.82,13606,38416
 103,Altstadt-Nord,12262,8840,2376,636,315,95,1.41,2.46,7298,17922
