@@ -1,0 +1,172 @@
+body {
+	background-color: white !important;	
+	font-size: 10px;
+}
+
+h1 {
+	font-size: 2em !important;
+	display: inline-block;
+}
+
+h2 {
+	font-size: 1.2em !important;
+	font-weight: bold !important;
+	margin-top: 10px !important; 
+}
+
+h3, h4 {
+	font-size: 1.2em !important;
+}
+
+#head {
+	height: auto;
+	margin: 0px 20px;
+	line-height: 1.1em; 
+}
+
+#head h2 {
+	font-size: 1.1em !important;
+	font-weight: normal  !important;
+	display: inline-block;
+	margin-left: 20px;
+}
+
+#main-panel,
+#second-panel {
+	min-width: 790px;
+	height: auto;
+}
+
+#second-panel {
+	float: right;
+	/*margin-left: 10px;*/
+	margin-right: 20px;
+}
+
+#main-panel {
+	float: left;
+	border: solid #ccc 1px;
+	margin-right: 10px;
+	margin-left: 20px;
+}
+
+@media screen and (max-width: 1645px) {
+	#head,
+	#head h2 {
+		margin-left: 5px;
+	}
+
+	#main-panel,
+	#second-panel {
+		width: 0px;
+		height: auto;
+		margin-right: 5px;
+		margin-left: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	svg {
+		width: 760px;
+	}
+
+	#second-panel {
+		float: none;
+	}
+
+	#main-panel {
+		float: none;
+		border: solid #ccc 1px;
+	}
+
+	#modi-panel,
+	#numbers-panel,
+	#detail-panel,
+	#detail-panel2,
+	#detail-panel3 {
+		width: 0px;
+	}
+}
+
+#modi-panel,
+#numbers-panel,
+#detail-panel,
+#detail-panel2,
+#detail-panel3 {
+	clear: both;
+	width: 790px;
+	min-height: 200px;
+	border: solid #ccc 1px;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
+#detail-panel,
+#detail-panel2,
+#detail-panel3 {
+	overflow: auto;
+}
+
+#myTabs {
+	margin-bottom: 10px;
+}
+
+.left-section, 
+.right-section {
+	width: 50%;
+}
+
+.left-section {
+	float: left;
+} 
+
+.right-section {
+	float: right;
+}
+
+#numbers-panel label {
+	font-weight: normal;
+}
+
+#numbers-panel .form-group {
+	width: 100%;
+}
+
+#numbers-panel div input {
+	height: 1.5em;
+	float: right !important;
+	margin-right: 40px !important; 
+}
+
+#legende {
+	background-color: #fff;
+    width: 100%;
+    height: 30px;
+	margin-top: 170px;
+	margin-bottom: 15px;
+}
+
+#linearLegend .colorlegend-labels {
+	font-size: 8px;
+	fill: #888;
+}
+
+div.bar {
+	display: inline-block;
+	width: 20px;
+	height: 75px;   /* We'll override this later */
+	background-color: teal;
+	margin-right: 5px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 9px;
+}
