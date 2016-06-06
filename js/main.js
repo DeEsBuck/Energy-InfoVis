@@ -1,29 +1,33 @@
+///////////// Test Variablen 
 var h = 260, w = window.innerWidth, barPadding = 1, padding = 40;
 var wLegend = 776, hLegend = 15;
+//////////////////////////////////////
 
 var dataset = []; //2012-haushaltsgroesse-statdteil.csv
 var dataname = []; //Stadtteil Namen
-var dataset2 = []; //2012_flaeche_dichte_einwohner_stadtteil.csv
-var dataname2 = []; 
-var dataset3 = []; // Sonstige Datensätze z.B. CO²-Äquivalente 
-var dataname3 = [];
+
 // Kennzahlen
 var energyPhh = [2050,3440,4050,4750,5370];
 
 var germanEnergyHead = 8372.27;
 var energyheadPhh = [];
 
-var allResidents = 0;//1044555;
+var allResidents = 0;
 var cityEnergy = 0;
 var cityEnergyHead = 0;
 var cityPhh = 0;
 var citySize = 0;
 
-var groupResidents = 0;//1044555;
+var groupResidents = 0;
 var groupEnergy = 0;
 var groupEnergyHead = 0;
 var groupPhh = 0;
 var groupSize = 0;
+
+var linearGreen = [d3.rgb(237,248,251),d3.rgb(0,109,44)];
+var linearRed = [d3.rgb(254,224,210),d3.rgb(222,45,38)];
+var linearBlue = [d3.rgb(222,235,247),d3.rgb(49,130,189)];
+var linearGray = [d3.rgb(240,240,240),d3.rgb(99,99,99)];
 
 function countPhh (data) {
   var onePhh = 0, twoPhh = 0, threePhh = 0, fourPhh = 0, fivePhh = 0;
@@ -39,45 +43,60 @@ function countPhh (data) {
   return countPerPhh;
 }
 
+function valuesDetails (data) {
+  for (var j = 0; j < data.length; j++) {
+    dataset.push(+data[j]["sum"]);
+    dataname.push(data[j]["number"]);
+    cityPhh += +data[j]["sum"];
+    dataset.push(data[j]["einwohner"]);
+    dataname.push(data[j]["number"]);
+    allResidents += +data[j]["einwohner"];
+    citySize += +data[j]["stadtflaecheqkm"];
+  }
 
+  for (var k = 0; k < countPhh(data).length; k++) {
+    energyheadPhh[k] = energyPhh[k]/(k+1);
+    cityEnergy += countPhh(data)[k]*energyheadPhh[k];
+  }
+
+  cityEnergyHead = cityEnergy / allResidents;
+
+  if (!null) {
+    $("#hhgroessen2").val(cityPhh);
+    $("#gesamtverbrauch").val(cityEnergy);
+    $("#alleinwohneranzahl").val(allResidents);
+    $("#gesamtflache").val(citySize);
+    $("#verbrauchkopf").val(cityEnergyHead);
+  } else {
+    $("#alleinwohneranzahl").val(0);
+    $("#gesamtflache").val(0);
+    $("#verbrauchkopf").val(0);
+    $("#hhgroessen2").val(0);
+    $("#gesamtverbrauch").val(0);
+  }
+}
+
+function legende (data, color) {
+  var lScale = d3.scale.linear()
+  .domain([d3.min(dataset), d3.max(dataset)])
+  .range([color[0], color[1]]);
+
+  colorlegend("#legende", lScale, "linear", 
+  {title: "Einwohneranzahl", boxWidth: 25, linearBoxes: 35});
+}
 
 var svgFile = "cologne-stadtteile.svg";
 d3.xml(svgFile, "image/svg+xml", function(xml) {
     var importNode = document.getElementById("main-panel").appendChild(xml.documentElement);
 });
 
-var cLinear = [d3.rgb(237,248,251),d3.rgb(0,109,44)];
-var c = d3.interpolateRgb(d3.rgb(237,248,251),d3.rgb(0,109,44));
-
-
 
 d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
-  for (var j = 0; j < data.length; j++) {
-    dataset.push(+data[j]["sum"]);
-    dataname.push(data[j]["number"]);
-    cityPhh += +data[j]["sum"];
-  }
-  for (var k = 0; k < countPhh(data).length; k++) {
-    energyheadPhh[k] = energyPhh[k]/(k+1);
-    cityEnergy += countPhh(data)[k]*energyheadPhh[k];
-  }
-  
-  if (!null) {
-    $("#hhgroessen2").val(cityPhh);
-    $("#gesamtverbrauch").val(cityEnergy);
-  } else {
-    $("#hhgroessen2").val(0);
-    $("#gesamtverbrauch").val(0);
-  }
+    valuesDetails(data);
+    legende(dataset, linearRed);    
 
 
-// Legende
-  var lScale = d3.scale.linear()
-  .domain([d3.min(dataset), d3.max(dataset)])
-  .range([cLinear[0], cLinear[1]]);
-
-  colorlegend("#legende", lScale, "linear", 
-  {title: "Einwohneranzahl", boxWidth: 25, linearBoxes: 35});
+///////// Test Diagramme für Detailansicht ////////////
 
 // Detail Panel 1
   var svg = d3.select("#detail-panel")
@@ -134,29 +153,9 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
   .attr('class', 'axis')
   .attr("transform", "translate(" + padding + ",0)")
   .call(yAxis);
-});
 
 
-d3.csv("data/2012_flaeche_dichte_einwohner_stadtteil.csv", function (data2) {
   
-  for (var j = 0; j < data2.length; j++) {
-    dataset2.push(data2[j]["einwohner"]);
-    dataname2.push(data2[j]["number"]);
-    allResidents += +data2[j]["einwohner"];
-    citySize += +data2[j]["stadtflaecheqkm"];
-  }
-  cityEnergyHead = cityEnergy / allResidents;
-
-  if (!null) {
-    $("#alleinwohneranzahl").val(allResidents);
-    $("#gesamtflache").val(citySize);
-    $("#verbrauchkopf").val(cityEnergyHead);
-  } else {
-    $("#alleinwohneranzahl").val(0);
-    ("#gesamtflache").val(0);
-    $("#verbrauchkopf").val(0);
-  }
-
 // Detail Panel 2
   var svg = d3.select("#detail-panel2")
     .append("svg")
@@ -164,16 +163,16 @@ d3.csv("data/2012_flaeche_dichte_einwohner_stadtteil.csv", function (data2) {
     .attr("height", h);
 
   svg.selectAll("rect")
-     .data(dataset2)
+     .data(dataset)
      .enter()
      .append("rect")
      .attr("x", function (d, i) {
-        return i * (w / dataset2.length);
+        return i * (w / dataset.length);
      })
      .attr("y", function (d) {
         return h - (d / 140);
      })
-     .attr("width", w / dataset2.length - barPadding)
+     .attr("width", w / dataset.length - barPadding)
      .attr("height", function (d) {
         return d / 140;
      })
@@ -182,7 +181,7 @@ d3.csv("data/2012_flaeche_dichte_einwohner_stadtteil.csv", function (data2) {
      });
 
    svg.selectAll("text")
-   .data(dataname2)
+   .data(dataname)
    .enter()
    .append("text")
    .text(function (d) {
@@ -190,7 +189,7 @@ d3.csv("data/2012_flaeche_dichte_einwohner_stadtteil.csv", function (data2) {
    })
     .attr("text-anchor", "middle")
    .attr("x", function(d, i) {
-        return i * (w / dataset2.length) + (w / dataset2.length - barPadding) / 2;
+        return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
     })
    .attr("y", function(d) {
         return h-2;  //15 is now 14
@@ -198,17 +197,8 @@ d3.csv("data/2012_flaeche_dichte_einwohner_stadtteil.csv", function (data2) {
    .attr("font-family", "sans-serif")
    .attr("font-size", "7px")
    .attr("fill", "black");
-});
 
-
-
-
-d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data3) {
   
-  for (var j = 0; j < data3.length; j++) {
-    dataset3.push(data3[j]["prohh"]);
-    dataname3.push(data3[j]["number"]);
-  }
 
 // Detail Panel 3
   var svg = d3.select("#detail-panel3")
@@ -217,16 +207,16 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data3) {
     .attr("height", h);
 
   svg.selectAll("rect")
-     .data(dataset3)
+     .data(dataset)
      .enter()
      .append("rect")
      .attr("x", function (d, i) {
-        return i * (w / dataset3.length);
+        return i * (w / dataset.length);
      })
      .attr("y", function (d) {
         return h - (d * 50);
      })
-     .attr("width", w / dataset3.length - barPadding)
+     .attr("width", w / dataset.length - barPadding)
      .attr("height", function (d) {
         return d * 50;
      })
@@ -236,7 +226,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data3) {
 
 
    svg.selectAll("text")
-   .data(dataname3)
+   .data(dataname)
    .enter()
    .append("text")
    .text(function (d) {
@@ -244,7 +234,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data3) {
    })
     .attr("text-anchor", "middle")
    .attr("x", function(d, i) {
-        return i * (w / dataset3.length) + (w / dataset3.length - barPadding) / 2;
+        return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
     })
    .attr("y", function(d) {
         return h-2;  //15 is now 14
@@ -252,5 +242,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data3) {
    .attr("font-family", "sans-serif")
    .attr("font-size", "7px")
    .attr("fill", "black");
+////////////////////////////
+
 });
 
