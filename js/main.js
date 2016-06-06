@@ -3,8 +3,9 @@ var h = 260, w = window.innerWidth, barPadding = 1, padding = 40;
 var wLegend = 776, hLegend = 15;
 //////////////////////////////////////
 
-var dataset = []; //2012-haushaltsgroesse-statdteil.csv
+var sumResidents = []; //2012-haushaltsgroesse-statdteil.csv
 var dataname = []; //Stadtteil Namen
+var diversity = []; //einwohnerqkm
 
 // Kennzahlen
 var energyPhh = [2050,3440,4050,4750,5370];
@@ -45,11 +46,12 @@ function countPhh (data) {
 
 function valuesDetails (data) {
   for (var j = 0; j < data.length; j++) {
-    dataset.push(+data[j]["sum"]);
+    sumResidents.push(+data[j]["sum"]);
     dataname.push(data[j]["number"]);
     cityPhh += +data[j]["sum"];
     allResidents += +data[j]["einwohner"];
     citySize += +data[j]["stadtflaecheqkm"];
+    diversity.push(+data[j]["einwohnerqkm"]);
   }
 
   for (var k = 0; k < countPhh(data).length; k++) {
@@ -74,13 +76,13 @@ function valuesDetails (data) {
   }
 }
 
-function legende (data, color) {
+function legende (data, color, title) {
   var lScale = d3.scale.linear()
-  .domain([d3.min(dataset), d3.max(dataset)])
+  .domain([d3.min(data), d3.max(data)])
   .range([color[0], color[1]]);
-  console.log(dataset);
+  console.log(sumResidents);
   colorlegend("#legende", lScale, "linear", 
-  {title: "Einwohneranzahl", boxWidth: 25, linearBoxes: 35});
+  {title: title, boxWidth: 25, linearBoxes: 35});
 }
 
 var svgFile = "cologne-stadtteile.svg";
@@ -88,10 +90,19 @@ d3.xml(svgFile, "image/svg+xml", function(xml) {
     var importNode = document.getElementById("main-panel").appendChild(xml.documentElement);
 });
 
-
 d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
     valuesDetails(data);
-    legende(dataset, linearRed);    
+    legende(sumResidents, linearGreen, "Einwohneranzahl"); 
+    legende(diversity, linearRed, "Wohndichte");
+    legende(diversity, linearRed, "Stromverbrauch pro Kopf");
+    legende(diversity, linearRed, "Alle Haushaltsgrößen");
+    legende(diversity, linearRed, "Alle Stromverbrauch");
+
+    legende(diversity, linearRed, "Stromverbrauch Ein-PHH");
+    legende(diversity, linearRed, "Stromverbrauch Zwei-PHH");
+    legende(diversity, linearRed, "Stromverbrauch Drei-PHH");
+    legende(diversity, linearRed, "Stromverbrauch Vier-PHH");
+    legende(diversity, linearRed, "Stromverbrauch Fünf-PHH");   
 
 
 ///////// Test Diagramme für Detailansicht ////////////
@@ -103,16 +114,16 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
     .attr("height", h);
 
   svg.selectAll("rect")
-     .data(dataset)
+     .data(sumResidents)
      .enter()
      .append("rect")
      .attr("x", function (d, i) {
-        return i * (w / dataset.length) + padding + 5;
+        return i * (w / sumResidents.length) + padding + 5;
      })
      .attr("y", function (d) {
         return h - (d / 100);
      })
-     .attr("width", w / dataset.length - barPadding)
+     .attr("width", w / sumResidents.length - barPadding)
      .attr("height", function (d) {
         return d/100;
      })
@@ -121,7 +132,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
      });
 
    var yScale = d3.scale.linear()
-   .domain([0, (d3.max(dataset)+1600)/10])
+   .domain([0, (d3.max(sumResidents)+1600)/10])
    .range([h - 1, 0]);
 
    var yAxis = d3.svg.axis()
@@ -138,7 +149,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
    })
    .attr("text-anchor", "middle")
    .attr("x", function(d, i) {
-        return (i * (w / dataset.length) + (w / dataset.length - barPadding) / 2) + padding + 5;
+        return (i * (w / sumResidents.length) + (w / sumResidents.length - barPadding) / 2) + padding + 5;
     })
    .attr("y", function(d) {
         return h-2;  //15 is now 14
@@ -161,16 +172,16 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
     .attr("height", h);
 
   svg.selectAll("rect")
-     .data(dataset)
+     .data(sumResidents)
      .enter()
      .append("rect")
      .attr("x", function (d, i) {
-        return i * (w / dataset.length);
+        return i * (w / sumResidents.length);
      })
      .attr("y", function (d) {
         return h - (d / 140);
      })
-     .attr("width", w / dataset.length - barPadding)
+     .attr("width", w / sumResidents.length - barPadding)
      .attr("height", function (d) {
         return d / 140;
      })
@@ -187,7 +198,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
    })
     .attr("text-anchor", "middle")
    .attr("x", function(d, i) {
-        return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+        return i * (w / sumResidents.length) + (w / sumResidents.length - barPadding) / 2;
     })
    .attr("y", function(d) {
         return h-2;  //15 is now 14
@@ -205,16 +216,16 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
     .attr("height", h);
 
   svg.selectAll("rect")
-     .data(dataset)
+     .data(sumResidents)
      .enter()
      .append("rect")
      .attr("x", function (d, i) {
-        return i * (w / dataset.length);
+        return i * (w / sumResidents.length);
      })
      .attr("y", function (d) {
         return h - (d * 50);
      })
-     .attr("width", w / dataset.length - barPadding)
+     .attr("width", w / sumResidents.length - barPadding)
      .attr("height", function (d) {
         return d * 50;
      })
@@ -232,7 +243,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
    })
     .attr("text-anchor", "middle")
    .attr("x", function(d, i) {
-        return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+        return i * (w / sumResidents.length) + (w / sumResidents.length - barPadding) / 2;
     })
    .attr("y", function(d) {
         return h-2;  //15 is now 14
