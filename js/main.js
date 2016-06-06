@@ -48,8 +48,6 @@ function valuesDetails (data) {
     dataset.push(+data[j]["sum"]);
     dataname.push(data[j]["number"]);
     cityPhh += +data[j]["sum"];
-    dataset.push(data[j]["einwohner"]);
-    dataname.push(data[j]["number"]);
     allResidents += +data[j]["einwohner"];
     citySize += +data[j]["stadtflaecheqkm"];
   }
@@ -80,7 +78,7 @@ function legende (data, color) {
   var lScale = d3.scale.linear()
   .domain([d3.min(dataset), d3.max(dataset)])
   .range([color[0], color[1]]);
-
+  console.log(dataset);
   colorlegend("#legende", lScale, "linear", 
   {title: "Einwohneranzahl", boxWidth: 25, linearBoxes: 35});
 }
