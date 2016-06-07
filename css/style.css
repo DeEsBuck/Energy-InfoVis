@@ -170,3 +170,16 @@ div.bar {
     font-family: sans-serif;
     font-size: 9px;
 }
+
+#legende .wohndichte,
+#legende .stromverbrauch-pro-kopf,
+#legende .gesamt-haushaltsgrossen,
+#legende .gesamt-stromverbrauch,
+#legende .stromverbrauch-ein-phh,
+#legende .stromverbrauch-zwei-phh,
+#legende .stromverbrauch-drei-phh,
+#legende .stromverbrauch-vier-phh,
+#legende .stromverbrauch-funf-phh,
+ {
+	display: none !important;
+}

@@ -114,12 +114,12 @@ function valuesDetails (data) {
 }
 
 //TODO legende auch für mehr farben linear vorbereiten
-function legende (data, color, title) {
+function legende (data, color, title, id) {
   var lScale = d3.scale.linear()
   .domain([d3.min(data), d3.max(data)])
   .range([color[0], color[1]]);
   colorlegend("#legende", lScale, "linear", 
-  {title: title, boxWidth: 25, linearBoxes: 30});
+  {title: title, boxWidth: 25, linearBoxes: 30, id: id});
 }
 
 var svgFile = "cologne-stadtteile.svg";
@@ -130,18 +130,17 @@ d3.xml(svgFile, "image/svg+xml", function(xml) {
 d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
     valuesDetails(data);
 
-    legende(residentPhh, linearGreen, "Einwohneranzahl"); 
-    legende(diversity, linearRed, "Wohndichte");
-    legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf");
-    legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen");
-    legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch");
-
+    legende(residentPhh, linearGreen, "Einwohneranzahl", "einwohneranzahl"); 
+    legende(diversity, linearRed, "Wohndichte", "wohndichte");
+    legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", "stromverbrauch-pro-kopf");
+    legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen", "gesamt-haushaltsgrossen");
+    legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", "gesamt-stromverbrauch");
      
-    legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH");
-    legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH");
-    legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH");
-    legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH");
-    legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH");   
+    legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH", "stromverbrauch-ein-phh");
+    legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH", "stromverbrauch-zwei-phh");
+    legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH", "stromverbrauch-drei-phh");
+    legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH", "stromverbrauch-vier-phh");
+    legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH", "stromverbrauch-funf-phh");   
     
 
 ///////// Test Diagramme für Detailansicht ////////////
@@ -294,3 +293,18 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
 
 });
 
+
+
+
+//$("input[name='modi']:not(:checked)").css("display", "none");
+$("input[name='modi']").bind("change",function(){
+    var showOrHide = ($(this).val() == 1) ? true : false;
+    if ($("input[name='modi']:not(:checked)").val()) {
+      //$("#legende .wohndichte").detach();
+      $("#legende .einwohneranzahl").toggle(showOrHide);
+    }
+    else {
+      //$("#legende .wohndichte").append();
+    }
+   
+ });
