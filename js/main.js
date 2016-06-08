@@ -69,11 +69,11 @@ function valuesDetails (data) {
     fourPhh.push(+data[j]["vierphh"]);
     fivePhh.push(+data[j]["funfphh"]); 
 
-    energyHeadSumPhh.push((onePhh[j]*energyheadPhh[0]+
+    energyHeadSumPhh.push(Math.floor((onePhh[j]*energyheadPhh[0]+
       twoPhh[j]*2*energyheadPhh[1]+
       threePhh[j]*3*energyheadPhh[2]+
       fourPhh[j]*4*energyheadPhh[3]+
-      fivePhh[j]*5*energyheadPhh[4])/residentPhh[j]);
+      fivePhh[j]*5*energyheadPhh[4])/residentPhh[j]));
 
     energySumPhh.push(onePhh[j]*energyPhh[0]+
       twoPhh[j]*energyPhh[1]+
@@ -99,11 +99,12 @@ function valuesDetails (data) {
 
 
   if (!null) {
-    $("#hhgroessen2").val(cityPhh);
-    $("#gesamtverbrauch").val(cityEnergy);
     $("#alleinwohneranzahl").val(allResidents);
+    $("#gesamtverbrauch").val(cityEnergy);
+    $("#verbrauchkopf").val(Math.floor(cityEnergyHead));
+    $("#hhgroessen2").val(cityPhh);
     $("#gesamtflache").val(citySize);
-    $("#verbrauchkopf").val(cityEnergyHead);
+    
   } else {
     $("#alleinwohneranzahl").val(0);
     $("#gesamtflache").val(0);
@@ -119,7 +120,7 @@ function legende (data, color, title, id) {
   .domain([d3.min(data), d3.max(data)])
   .range([color[0], color[1]]);
   colorlegend("#legende", lScale, "linear", 
-  {title: title, boxWidth: 25, linearBoxes: 30, id: id});
+  {title: title, boxWidth: 38, linearBoxes: 20, id: id});
 }
 
 var svgFile = "cologne-stadtteile.svg";
@@ -128,20 +129,60 @@ d3.xml(svgFile, "image/svg+xml", function(xml) {
 });
 
 d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
-    valuesDetails(data);
+  valuesDetails(data);
 
-    legende(residentPhh, linearGreen, "Einwohneranzahl", "einwohneranzahl"); 
-    legende(diversity, linearRed, "Wohndichte", "wohndichte");
-    legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", "stromverbrauch-pro-kopf");
-    legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen", "gesamt-haushaltsgrossen");
-    legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", "gesamt-stromverbrauch");
-     
-    legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH", "stromverbrauch-ein-phh");
-    legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH", "stromverbrauch-zwei-phh");
-    legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH", "stromverbrauch-drei-phh");
-    legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH", "stromverbrauch-vier-phh");
-    legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH", "stromverbrauch-funf-phh");   
-    
+  function switchLegends (index) {
+    switch (index) {
+      case "0": 
+        legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
+      break;
+      case "1":
+        legende(diversity, linearRed, "Wohndichte", 1);
+      break;
+      case "2":
+        legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", 2)
+      break;
+      case "3":
+        legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen", 3)
+      break;
+      case "4":
+        legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", 4)
+      break;
+      case "5":
+        legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH", 5)
+      break;
+      case "6":
+        legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6)
+      break;
+      case "7":
+        legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH", 7)
+      break;
+      case "8":
+        legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8)
+      break;
+      case "9":
+        legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH", 9)
+      break; 
+    }  
+  }
+
+  var temp = "0", prev = "0";
+  var radioIndex = "0";
+  legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
+  $("input[name='modi']").on("click",function(){
+    radioIndex =  $(this).val();
+    if (radioIndex == prev) { 
+      console.log("do nothing");
+    }
+    else if (!$(this).checked && radioIndex != prev) {
+      console.log("prev: "+prev);
+      console.log("curr: "+radioIndex);
+      d3.selectAll("#legende [class='"+prev+"']").remove();
+      prev = radioIndex;
+      switchLegends(radioIndex);
+    }   
+  });
+
 
 ///////// Test Diagramme für Detailansicht ////////////
 
@@ -291,20 +332,12 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
    .attr("fill", "black");
 ////////////////////////////
 
+
+
+
+
 });
 
 
 
 
-//$("input[name='modi']:not(:checked)").css("display", "none");
-$("input[name='modi']").bind("change",function(){
-    var showOrHide = ($(this).val() == 1) ? true : false;
-    if ($("input[name='modi']:not(:checked)").val()) {
-      //$("#legende .wohndichte").detach();
-      $("#legende .einwohneranzahl").toggle(showOrHide);
-    }
-    else {
-      //$("#legende .wohndichte").append();
-    }
-   
- });

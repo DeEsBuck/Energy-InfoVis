@@ -33,7 +33,7 @@ var colorlegend = function (target, scale, type, options) {
     , range = scale.range()    
     , i = 0
     , isVertical = opts.vertical || false
-    , id = opts.id || null;
+    , index = opts.id || 0;
 
   // check for valid input - 'quantize' not included
   for (i = 0 ; i < scaleTypes.length ; i++) {
@@ -87,7 +87,7 @@ var colorlegend = function (target, scale, type, options) {
     .append('svg')
       .attr('width', w)
       .attr('height', h)
-      .attr('class', id)
+      .attr('class', index)
     .append('g')
       .attr('class', 'colorlegend')
       .attr('transform', 'translate(' + padding[3] + ',' + padding[0] + ')')

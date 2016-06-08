@@ -171,15 +171,17 @@ div.bar {
     font-size: 9px;
 }
 
-#legende .wohndichte,
-#legende .stromverbrauch-pro-kopf,
-#legende .gesamt-haushaltsgrossen,
-#legende .gesamt-stromverbrauch,
-#legende .stromverbrauch-ein-phh,
-#legende .stromverbrauch-zwei-phh,
-#legende .stromverbrauch-drei-phh,
-#legende .stromverbrauch-vier-phh,
-#legende .stromverbrauch-funf-phh,
+#legende svg.legend-wohndichte {
+	transform: translate(0,-30);
+}
+#legende .legend-stromverbrauch-pro-kopf,
+#legende .legend-gesamt-haushaltsgrossen,
+#legende .legend-gesamt-stromverbrauch,
+#legende .legend-stromverbrauch-ein-phh,
+#legende .legend-stromverbrauch-zwei-phh,
+#legende .legend-stromverbrauch-drei-phh,
+#legende .legend-stromverbrauch-vier-phh,
+#legende .legend-stromverbrauch-funf-phh,
  {
-	display: none !important;
+	
 }
