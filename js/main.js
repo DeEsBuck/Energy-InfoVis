@@ -1,20 +1,16 @@
-///////////// Test Variablen 
-var h = 260, w = window.innerWidth, barPadding = 1, padding = 40;
-var wLegend = 776, hLegend = 15;
-//////////////////////////////////////
 
-var sumPhh = []; //2012-haushaltsgroesse-statdteil.csv
+var sumPhh = []; //Alle haushalte je statdteil
 var dataname = []; //Stadtteil Namen
 var diversity = []; //einwohnerqkm
 var onePhh = [], twoPhh = [], threePhh = [], fourPhh = [], fivePhh = [];
 var _onePhh = [], _twoPhh = [], _threePhh = [], _fourPhh = [], _fivePhh = [];
-var residentPhh = [];
-var energyHeadSumPhh = [];
-var energySumPhh = [];
+var residentPhh = []; //Einwohner pro Stadtteil
+var energyHeadSumPhh = []; // Pro Kopf Energie verbrauch
+var energySumPhh = []; //Gesamt Energie verbrauch pro Haushalt
 // Kennzahlen
 var energyPhh = [2050,3440,4050,4750,5370];
 var germanEnergyHead = 8372.27;
-var energyheadPhh = []; // Hilfswerte je phh
+var energyheadPhh = []; // Hilfswerte Energieverbrauch pro kopf je phh
 
 var allResidents = 0;
 var cityEnergy = 0;
@@ -128,7 +124,123 @@ d3.xml(svgFile, "image/svg+xml", function(xml) {
     var importNode = document.getElementById("main-panel").appendChild(xml.documentElement);
 });
 
-d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
+////////////////Funktion Balken diagramme für Detail Panel////////////////////
+function groupedBarChart (data, panelName) {
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+      width = 6000 - margin.left - margin.right,
+      height = 250 - margin.top - margin.bottom;
+
+  var x0 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var x1 = d3.scale.ordinal();
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var color = d3.scale.ordinal()
+      .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
+
+  var svg = d3.select(panelName).append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Liste mit Spaltenname der Haushalte
+ var phhName = d3.keys(data[0])
+  .filter(function(key) { 
+    return key !== "number" 
+          && key !== "stadtteil"
+          && key !== "sumphh"
+          && key !== "prohh"
+          && key !== "einwohnerqkm"
+          && key !== "stadtflaecheqkm"
+          && key !== "einwohner"; 
+  });
+  console.log(phhName);
+
+  data.forEach(function (d) {
+    d.phhValue = phhName.map(function (name) {
+      return {name: name, value: +d[name]};
+    });
+    console.log(d.phhValue);
+  });
+  
+  x0.domain(data.map(function(d) { return d.stadtteil; }));
+  x1.domain(phhName).rangeRoundBands([0, x0.rangeBand()]);
+  y.domain([0, d3.max(data, function(d) { 
+    return d3.max(d.phhValue, function(d) { 
+      return d.value; 
+    }); 
+  })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Stromverbrauch in kWh");
+
+  var phh = svg.selectAll(".phh")
+      .data(data)
+    .enter().append("g")
+      .attr("class", "phh")
+      .attr("transform", function(d) { return "translate(" + x0(d.stadtteil) + ",0)"; });
+
+  phh.selectAll("rect")
+      .data(function(d) { return d.phhValue; })
+    .enter().append("rect")
+      .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x1(d.name); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .style("fill", function(d) { return color(d.name); }); 
+
+  var legend = svg.selectAll(".legend")
+      .data(phhName.slice().reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d; });
+}
+
+
+//////////////////////CSV DATASET CONTEXT//////////////////////////
+
+d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
+  if (error) throw error;
+
   valuesDetails(data);
 
   function switchLegends (index) {
@@ -166,7 +278,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
     }  
   }
 
-  var temp = "0", prev = "0";
+  var prev = "0";
   var radioIndex = "0";
   legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
   $("input[name='modi']").on("click",function(){
@@ -175,169 +287,17 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (data) {
       console.log("do nothing");
     }
     else if (!$(this).checked && radioIndex != prev) {
-      console.log("prev: "+prev);
-      console.log("curr: "+radioIndex);
       d3.selectAll("#legende [class='"+prev+"']").remove();
       prev = radioIndex;
       switchLegends(radioIndex);
     }   
   });
 
-
-///////// Test Diagramme für Detailansicht ////////////
-
-// Detail Panel 1
-  var svg = d3.select("#detail-panel")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-
-  svg.selectAll("rect")
-     .data(sumPhh)
-     .enter()
-     .append("rect")
-     .attr("x", function (d, i) {
-        return i * (w / sumPhh.length) + padding + 5;
-     })
-     .attr("y", function (d) {
-        return h - (d / 100);
-     })
-     .attr("width", w / sumPhh.length - barPadding)
-     .attr("height", function (d) {
-        return d/100;
-     })
-     .attr("fill", function(d) {
-      return "rgb(166, 0, " + Math.round((d / 110)) + ")";
-     });
-
-   var yScale = d3.scale.linear()
-   .domain([0, (d3.max(sumPhh)+1600)/10])
-   .range([h - 1, 0]);
-
-   var yAxis = d3.svg.axis()
-    .scale(yScale)
-    .orient("left")
-    .ticks(5);
-
-   svg.selectAll("text")
-   .data(dataname)
-   .enter()
-   .append("text")
-   .text(function (d) {
-    return d;
-   })
-   .attr("text-anchor", "middle")
-   .attr("x", function(d, i) {
-        return (i * (w / sumPhh.length) + (w / sumPhh.length - barPadding) / 2) + padding + 5;
-    })
-   .attr("y", function(d) {
-        return h-2;  //15 is now 14
-    })
-   .attr("font-family", "sans-serif")
-   .attr("font-size", "7px")
-   .attr("fill", "black");
-
-   svg.append("g")
-  .attr('class', 'axis')
-  .attr("transform", "translate(" + padding + ",0)")
-  .call(yAxis);
-
-
+////////////////Balken diagramme für Detail Panel Konfiguration////////////////////
+  var testdata = [12837,3677,1011,552,215];
   
-// Detail Panel 2
-  var svg = d3.select("#detail-panel2")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-
-  svg.selectAll("rect")
-     .data(sumPhh)
-     .enter()
-     .append("rect")
-     .attr("x", function (d, i) {
-        return i * (w / sumPhh.length);
-     })
-     .attr("y", function (d) {
-        return h - (d / 140);
-     })
-     .attr("width", w / sumPhh.length - barPadding)
-     .attr("height", function (d) {
-        return d / 140;
-     })
-     .attr("fill", function(d) {
-      return "rgb(166, 0, " + Math.round((d / 110)) + ")";
-     });
-
-   svg.selectAll("text")
-   .data(dataname)
-   .enter()
-   .append("text")
-   .text(function (d) {
-    return d;
-   })
-    .attr("text-anchor", "middle")
-   .attr("x", function(d, i) {
-        return i * (w / sumPhh.length) + (w / sumPhh.length - barPadding) / 2;
-    })
-   .attr("y", function(d) {
-        return h-2;  //15 is now 14
-    })
-   .attr("font-family", "sans-serif")
-   .attr("font-size", "7px")
-   .attr("fill", "black");
-
-  
-
-// Detail Panel 3
-  var svg = d3.select("#detail-panel3")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-
-  svg.selectAll("rect")
-     .data(sumPhh)
-     .enter()
-     .append("rect")
-     .attr("x", function (d, i) {
-        return i * (w / sumPhh.length);
-     })
-     .attr("y", function (d) {
-        return h - (d * 50);
-     })
-     .attr("width", w / sumPhh.length - barPadding)
-     .attr("height", function (d) {
-        return d * 50;
-     })
-     .attr("fill", function(d) {
-      return "rgb(166, 0, " + Math.round((d / 110)) + ")";
-     });
-
-
-   svg.selectAll("text")
-   .data(dataname)
-   .enter()
-   .append("text")
-   .text(function (d) {
-    return d;
-   })
-    .attr("text-anchor", "middle")
-   .attr("x", function(d, i) {
-        return i * (w / sumPhh.length) + (w / sumPhh.length - barPadding) / 2;
-    })
-   .attr("y", function(d) {
-        return h-2;  //15 is now 14
-    })
-   .attr("font-family", "sans-serif")
-   .attr("font-size", "7px")
-   .attr("fill", "black");
-////////////////////////////
-
-
-
-
-
+  groupedBarChart (data, "#detail-panel");
+  groupedBarChart (data, "#detail-panel2");
+  groupedBarChart (data, "#detail-panel3");
+   
 });
-
-
-
-
