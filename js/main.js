@@ -81,7 +81,7 @@ function valuesDetails (data) {
       _onePhh[i] = onePhh[i]*energyheadPhh[0];
       _twoPhh[i] = twoPhh[i]*energyheadPhh[1];
       _threePhh[i] = threePhh[i]*energyheadPhh[2];
-      _fourPhh[i] = fourPhh[i]*energyheadPhh[3];
+      _fourPhh[i] = Math.floor(fourPhh[i]*energyheadPhh[3]);
       _fivePhh[i] = fivePhh[i]*energyheadPhh[4];
     }
   }
@@ -119,10 +119,56 @@ function legende (data, color, title, id) {
   {title: title, boxWidth: 38, linearBoxes: 20, id: id});
 }
 
-var svgFile = "cologne-stadtteile.svg";
-d3.xml(svgFile, "image/svg+xml", function(xml) {
-    var importNode = document.getElementById("main-panel").appendChild(xml.documentElement);
-});
+////////////////////STADTKARTE//////////////////////////
+var green = d3.rgb(0,109,44);
+
+function colorId (selection, value, id, color, max, min) {
+  var colorpleth = d3.scale.linear()
+  .range([color[0], color[1]]);
+  colorpleth.domain([min,max]);
+console.log("ID: "+id);
+console.log("Value: "+value);
+  selection.select("[id='"+id+"']")
+  .data(value)
+    .style("fill", function (d) {
+      var val = value;
+      if(val) {
+        return colorpleth(val);
+      }
+      else {
+        console.log("ERROR, does nor exist: "+id);
+        return green;
+      }
+    });
+}
+
+function initMap (data, value, color, max, min) {
+  var mainPanel = d3.select("#main-panel")
+  .append("svg")
+  .attr({"width": 776, "height": 800});
+
+  var svgFile = "cologne-stadtteile.svg";
+  d3.xml(svgFile, "image/svg+xml", function (error, xml) {
+    if (error) {console.log(error); return;}
+    
+    mainPanel.node().appendChild(xml.documentElement);
+    
+    mainPanel.select("#TT_Stadtteile_copy")
+    .selectAll("path")
+    .attr("fill", "#000000");
+
+     mainPanel.select("#TT_Bezirke_copy")
+    .selectAll("path")
+    .attr("fill", "#000000"); 
+
+    var innerSVG = mainPanel.selectAll("svg");
+
+    for (var i = 0; i < data.length; ++i) {
+      colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
+    }
+  });
+}
+
 
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
 function groupedBarChart (data, panelName) {
@@ -167,13 +213,13 @@ function groupedBarChart (data, panelName) {
           && key !== "stadtflaecheqkm"
           && key !== "einwohner"; 
   });
-  console.log(phhName);
+  //console.log(phhName);
 
   data.forEach(function (d) {
     d.phhValue = phhName.map(function (name) {
       return {name: name, value: +d[name]};
     });
-    console.log(d.phhValue);
+    //console.log(d.phhValue);
   });
   
   x0.domain(data.map(function(d) { return d.stadtteil; }));
@@ -240,40 +286,51 @@ function groupedBarChart (data, panelName) {
 
 d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
   if (error) throw error;
-
+  
   valuesDetails(data);
+  initMap(data, residentPhh, linearGreen, 41814, 1084);
 
   function switchLegends (index) {
     switch (index) {
       case "0": 
         legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
+        initMap(data, residentPhh, linearGreen, 41814, 1084);
       break;
       case "1":
         legende(diversity, linearRed, "Wohndichte", 1);
+        initMap(data, diversity, linearRed, 13606, 170);
       break;
       case "2":
-        legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", 2)
+        legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", 2);
+        initMap(data, energyHeadSumPhh, linearLila, 1722, 1338);
       break;
       case "3":
-        legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen", 3)
+        legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen", 3);
+        initMap(data, sumPhh, linearGray, 25105, 459);
       break;
       case "4":
-        legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", 4)
+        legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", 4);
+        initMap(data, energySumPhh, linearOrange, 65481260, 1588240);
       break;
       case "5":
-        legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH", 5)
+        legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH", 5);
+        initMap(data, _onePhh, linearBlue, 35009900, 264450);
       break;
       case "6":
-        legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6)
+        legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6);
+        initMap(data, _twoPhh, linearBlue, 9379160, 252840);
       break;
       case "7":
-        legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH", 7)
+        legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH", 7);
+        initMap(data, _threePhh, linearBlue, 3160350, 120150);
       break;
       case "8":
-        legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8)
+        legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8);
+        initMap(data, _fourPhh, linearBlue, 1820437, 90250);
       break;
       case "9":
-        legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH", 9)
+        legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH", 9);
+        initMap(data, _fivePhh, linearBlue, 920418, 19332);
       break; 
     }  
   }
@@ -281,6 +338,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
   var prev = "0";
   var radioIndex = "0";
   legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
+
   $("input[name='modi']").on("click",function(){
     radioIndex =  $(this).val();
     if (radioIndex == prev) { 
@@ -288,16 +346,18 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
     }
     else if (!$(this).checked && radioIndex != prev) {
       d3.selectAll("#legende [class='"+prev+"']").remove();
+      d3.select("#main-panel svg").remove();
       prev = radioIndex;
       switchLegends(radioIndex);
     }   
   });
 
-////////////////Balken diagramme für Detail Panel Konfiguration////////////////////
+
+
+////////////////Balken diagramme für Detail Panel////////////////////
   var testdata = [12837,3677,1011,552,215];
   
-  groupedBarChart (data, "#detail-panel");
-  groupedBarChart (data, "#detail-panel2");
-  groupedBarChart (data, "#detail-panel3");
+  groupedBarChart(data, "#detail-panel");
+ 
    
 });
