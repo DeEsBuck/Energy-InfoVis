@@ -126,20 +126,35 @@ function colorId (selection, value, id, color, max, min) {
   var colorpleth = d3.scale.linear()
   .range([color[0], color[1]]);
   colorpleth.domain([min,max]);
-console.log("ID: "+id);
-console.log("Value: "+value);
+  //console.log("ID: "+id);
+  //console.log("Value: "+value);
   selection.select("[id='"+id+"']")
   .data(value)
-    .style("fill", function (d) {
+    .style("fill", function () {
       var val = value;
       if(val) {
         return colorpleth(val);
       }
       else {
-        console.log("ERROR, does nor exist: "+id);
+        console.log("ERROR, does not exist: "+id);
         return green;
       }
     });
+}
+
+// TODO implement change darken color by hover and keep color by click
+// and uncheck by second click. Return id of Polygon for groupedBarChart
+function polygonHover (selection) {
+  selection.selectAll("polygon")
+    .on("mouseover", function () {
+      d3.select(this).attr("fill", green);
+    })
+    .on("mouseout", function (d) {
+      d3.select(this)
+      .attr("fill", "#fff");
+    })
+    .append("text")
+    .style("pointer-events", "none");
 }
 
 function initMap (data, value, color, max, min) {
@@ -166,6 +181,7 @@ function initMap (data, value, color, max, min) {
     for (var i = 0; i < data.length; ++i) {
       colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
     }
+
   });
 }
 

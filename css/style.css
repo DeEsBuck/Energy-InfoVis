@@ -1,6 +1,7 @@
 body {
 	background-color: white !important;	
 	font-size: 10px;
+	width: 100%;
 }
 
 h1 {
@@ -49,7 +50,7 @@ h3, h4 {
 	margin-left: 20px;
 }
 
-@media screen and (max-width: 1645px) {
+@media screen and (max-width: 1279px) {
 	#head,
 	#head h2 {
 		margin-left: 5px;
@@ -57,7 +58,7 @@ h3, h4 {
 
 	#main-panel,
 	#second-panel {
-		width: 0px;
+		width: 100% !important;
 		height: auto;
 		margin-right: 5px;
 		margin-left: 5px;
@@ -65,8 +66,8 @@ h3, h4 {
 		margin-bottom: 5px;
 	}
 
-	svg {
-		width: 760px;
+	#main-panel svg {
+		width: 100% !important;
 	}
 
 	#second-panel {
@@ -77,16 +78,72 @@ h3, h4 {
 		float: none;
 	}
 
-	#modi-panel,
 	#numbers-panel,
 	#detail-panel,
 	#detail-panel2,
 	#detail-panel3 {
-		width: 0px;
+		width: 100% !important;
+	}
+
+	#modi-panel {
+		position: absolute;
+		top: -800px;
+		right: 20px;
+		width: 280px !important;
+	}
+
+	#modi-panel .left-section, 
+	#modi-panel .right-section {
+		width: 100% !important;
+	}
+
+	#modi-panel .left-section {
+		float: none !important;
+	} 
+
+	#modi-panel .right-section {
+		float: none !important;
+	}
+
+	#legende {
+		margin-top: 10px !important;
 	}
 }
 
-#modi-panel,
+@media screen and (min-width: 1280px) {
+	#main-panel,
+	#second-panel {
+		height: auto;
+		margin-right: 5px;
+		margin-left: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	#main-panel svg {
+		width: 100%;
+	}
+
+	#modi-panel,
+	#numbers-panel,
+	#detail-panel,
+	#detail-panel2,
+	#detail-panel3,
+	#myTabs {
+		width: 600px !important;
+		float: right;
+		font-size: .85em;
+	}
+}
+
+#modi-panel {
+	width: 790px;
+	min-height: 200px;
+	border: solid #ccc 1px;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
 #numbers-panel,
 #detail-panel,
 #detail-panel2,
@@ -102,7 +159,7 @@ h3, h4 {
 #detail-panel,
 #detail-panel2,
 #detail-panel3 {
-	overflow: auto;
+	overflow: auto !important;
 	background-color: #eee;
 }
 
@@ -169,3 +226,8 @@ div.bar {
     font-family: sans-serif;
     font-size: 9px;
 }
+
+svg text {
+     pointer-events: none;
+}
+

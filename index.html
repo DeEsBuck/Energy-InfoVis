@@ -15,179 +15,189 @@
 <title>Informations Visualisierung</title>
 <body>
     <div class="container-fluid">
-    <div id="head">
-        <h1>Der Stromverbrauch privater <br>Haushalte in den Stadtteilen Kölns</h1>
-        <h2>Gestaltung einer Informationsvisualisierung zur Untersuchung <br>des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen Kölns</h2>
-    </div>
-    <div id="main-panel">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="head">
+                    <h1>Der Stromverbrauch privater <br>Haushalte in den Stadtteilen Kölns</h1>
+                    <h2>Gestaltung einer Informationsvisualisierung zur Untersuchung <br>des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen Kölns</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row"> 
+            <div class="col-lg-6 col-md-12">   
+                <div id="main-panel">
 
-    </div>
-    <div id="second-panel">
-        <div id="modi-panel">
-            <h2>Stadtkarten Modifikation (Alle Werte sind pro Stadtteil)</h2>
-            <form id="modi">
-                <div class="left-section">
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-0-einwohneranzahl">
-                            <input name="modi" id="radio-0-einwohneranzahl" type="radio" value="0" checked >
-                            Einwohneranzahl
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-1-wohndichte">
-                            <input name="modi" id="radio-1-wohndichte" type="radio" value="1" />Wohndichte
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-2-verbrauchkopf">
-                            <input name="modi" id="radio-2-verbrauchkopf" type="radio" value="2" />Stromverbrauch pro Kopf
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-3-hhgroessen">
-                            <input name="modi" id="radio-3-hhgroessen" type="radio" value="3" />Gesamt Haushaltsgrößen
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-4-stromverbrauch">
-                            <input name="modi" id="radio-4-stromverbrauch" type="radio" value="4" />
-                            Gesamt Stromverbrauch
-                        </label>
-                    </div>
                 </div>
-                <div class="right-section">    
-                    <div class="radio"> 
-                        <label class="radio-inline" for="radio-5-stromverbraucheinphh">
-                            <input name="modi" id="radio-5-stromverbraucheinphh" type="radio" value="5" />
-                            Stromverbrauch Ein-PHH
-                        </label>
-                    </div>
-                    <div class="radio">    
-                        <label class="radio-inline" for="radio-6-stromverbrauchzweiphh">
-                            <input name="modi" id="radio-6-stromverbrauchzweiphh" type="radio" value="6" />
-                            Stromverbrauch Zwei-PHH
-                        </label>
-                    </div>
-                    <div class="radio">    
-                        <label class="radio-inline" for="radio-7-stromverbrauchdreiphh">
-                            <input name="modi" id="radio-7-stromverbrauchdreiphh" type="radio" value="7" />
-                            Stromverbrauch Drei-PHH
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-8-stromverbrauchvierphh">
-                            <input name="modi" id="radio-8-stromverbrauchvierphh" type="radio" value="8" />
-                            Stromverbrauch Vier-PHH
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="radio-inline" for="radio-9-stromverbrauchfunfphh">
-                            <input name="modi" id="radio-9-stromverbrauchfunfphh" type="radio" value="9" />
-                            Stromverbrauch Fünf-PHH
-                        </label>
-                    </div>
-                </div>    
-            </form>
-            <div id="legende">
+            </div>
+            <div class="col-lg-6 col-md-12"> 
+                <div id="second-panel">
+                    <div id="modi-panel">
+                        <h2>Stadtkarten Modifikation (Alle Werte sind pro Stadtteil)</h2>
+                        <form id="modi">
+                            <div class="left-section">
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-0-einwohneranzahl">
+                                        <input name="modi" id="radio-0-einwohneranzahl" type="radio" value="0" checked >
+                                        Einwohneranzahl
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-1-wohndichte">
+                                        <input name="modi" id="radio-1-wohndichte" type="radio" value="1" />Wohndichte
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-2-verbrauchkopf">
+                                        <input name="modi" id="radio-2-verbrauchkopf" type="radio" value="2" />Stromverbrauch pro Kopf
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-3-hhgroessen">
+                                        <input name="modi" id="radio-3-hhgroessen" type="radio" value="3" />Gesamt Haushaltsgrößen
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-4-stromverbrauch">
+                                        <input name="modi" id="radio-4-stromverbrauch" type="radio" value="4" />
+                                        Gesamt Stromverbrauch
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="right-section">    
+                                <div class="radio"> 
+                                    <label class="radio-inline" for="radio-5-stromverbraucheinphh">
+                                        <input name="modi" id="radio-5-stromverbraucheinphh" type="radio" value="5" />
+                                        Stromverbrauch Ein-PHH
+                                    </label>
+                                </div>
+                                <div class="radio">    
+                                    <label class="radio-inline" for="radio-6-stromverbrauchzweiphh">
+                                        <input name="modi" id="radio-6-stromverbrauchzweiphh" type="radio" value="6" />
+                                        Stromverbrauch Zwei-PHH
+                                    </label>
+                                </div>
+                                <div class="radio">    
+                                    <label class="radio-inline" for="radio-7-stromverbrauchdreiphh">
+                                        <input name="modi" id="radio-7-stromverbrauchdreiphh" type="radio" value="7" />
+                                        Stromverbrauch Drei-PHH
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-8-stromverbrauchvierphh">
+                                        <input name="modi" id="radio-8-stromverbrauchvierphh" type="radio" value="8" />
+                                        Stromverbrauch Vier-PHH
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline" for="radio-9-stromverbrauchfunfphh">
+                                        <input name="modi" id="radio-9-stromverbrauchfunfphh" type="radio" value="9" />
+                                        Stromverbrauch Fünf-PHH
+                                    </label>
+                                </div>
+                            </div>    
+                        </form>
+                        <div id="legende">
 
+                        </div>
+                    </div>
+                    <div id="numbers-panel">
+                        <form id="kennzahlen" class="form-inline ">
+                            <div class="left-section">
+                                <h2>Kennzahlen Köln</h2>
+                                <div class="form-group">
+                                    <label for="alleinwohneranzahl">
+                                        Einwohneranzahl
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="alleinwohneranzahl" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label for="gesamtverbrauch">
+                                        Gesamtstromverbrauch
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="gesamtverbrauch" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label for="verbrauchkopf">
+                                        Verbrauch pro Kopf
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="verbrauchkopf" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label for="hhgroessen2">
+                                        Anzahl Haushalte
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="hhgroessen2" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label for="gesamtflache">
+                                        Gesamtfläche
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="gesamtflache" type="text" value="0" size="10" readonly />
+                                </div>
+                            </div>
+                            <div class="right-section">
+                                <h2>Kennzahlen der Auswahl</h2>    
+                                <div class="form-group"> 
+                                    <label for="einwohneranzahl">
+                                        Einwohneranzahl
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="einwohneranzahl" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">    
+                                    <label for="stromverbrauch">
+                                        Stromverbrauch
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="stromverbrauch" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">    
+                                    <label for="stromprokopf">
+                                        Verbrauch pro Kopf
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="stromprokopf" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label for="hhgrose2">
+                                        Anzahl Haushalte
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="hhgrose2" type="text" value="0" size="10" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label for="flache">
+                                        Fläche
+                                    </label>
+                                    <input class="form-control" name="kennzahlen" id="flache" type="text" value="0" size="10" readonly />
+                                </div>
+                            </div>    
+                        </form>
+                    </div>
+                    <ul class="nav nav-pills" id="myTabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#tab1" role="tab" data-toggle="tab">Stromverbrauch je PHH in kWh</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#tab2" role="tab" data-toggle="tab">CO²-Äquivalente je PHH</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#tab3" role="tab" data-toggle="tab">Energieträger je PHH in kWh</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="tab1">
+                            <div id="detail-panel">
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab2">
+                            <div id="detail-panel2">
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab3">
+                            <div id="detail-panel3">
+                            </div>
+                        </div>
+                    </div>
+                </div> 
             </div>
         </div>
-        <div id="numbers-panel">
-            <form id="kennzahlen" class="form-inline ">
-                <div class="left-section">
-                    <h2>Kennzahlen Köln</h2>
-                    <div class="form-group">
-                        <label for="alleinwohneranzahl">
-                            Einwohneranzahl
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="alleinwohneranzahl" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="gesamtverbrauch">
-                            Gesamtstromverbrauch
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="gesamtverbrauch" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="verbrauchkopf">
-                            Verbrauch pro Kopf
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="verbrauchkopf" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="hhgroessen2">
-                            Anzahl Haushalte
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="hhgroessen2" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="gesamtflache">
-                            Gesamtfläche
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="gesamtflache" type="text" value="0" size="10" readonly />
-                    </div>
-                </div>
-                <div class="right-section">
-                    <h2>Kennzahlen der Auswahl</h2>    
-                    <div class="form-group"> 
-                        <label for="einwohneranzahl">
-                            Einwohneranzahl
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="einwohneranzahl" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">    
-                        <label for="stromverbrauch">
-                            Stromverbrauch
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="stromverbrauch" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">    
-                        <label for="stromprokopf">
-                            Verbrauch pro Kopf
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="stromprokopf" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="hhgrose2">
-                            Anzahl Haushalte
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="hhgrose2" type="text" value="0" size="10" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label for="flache">
-                            Fläche
-                        </label>
-                        <input class="form-control" name="kennzahlen" id="flache" type="text" value="0" size="10" readonly />
-                    </div>
-                </div>    
-            </form>
-        </div>
-        <ul class="nav nav-pills" id="myTabs" role="tablist">
-            <li role="presentation" class="active">
-                <a href="#tab1" role="tab" data-toggle="tab">Stromverbrauch je PHH in kWh</a>
-            </li>
-            <li role="presentation">
-                <a href="#tab2" role="tab" data-toggle="tab">CO²-Äquivalente je PHH</a>
-            </li>
-            <li role="presentation">
-                <a href="#tab3" role="tab" data-toggle="tab">Energieträger je PHH in kWh</a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="tab1">
-                <div id="detail-panel">
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="tab2">
-                <div id="detail-panel2">
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="tab3">
-                <div id="detail-panel3">
-                </div>
-            </div>
-        </div>
-    </div> 
     </div>   
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
