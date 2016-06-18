@@ -362,7 +362,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
     }
     else if (!$(this).checked && radioIndex != prev) {
       d3.selectAll("#legende [class='"+prev+"']").remove();
-      d3.select("#main-panel svg").remove();
+      d3.select("#main-panel svg").transition().delay(10).remove();
       prev = radioIndex;
       switchLegends(radioIndex);
     }   

@@ -2,6 +2,7 @@ body {
 	background-color: white !important;	
 	font-size: 10px;
 	width: 100%;
+	overflow: hidden;
 }
 
 h1 {
@@ -51,6 +52,10 @@ h3, h4 {
 }
 
 @media screen and (max-width: 1024px) {
+	body {
+		overflow: auto;
+	}
+
 	#head,
 	#head h2 {
 		margin-left: 5px;
