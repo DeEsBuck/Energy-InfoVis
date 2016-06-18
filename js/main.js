@@ -124,37 +124,49 @@ var green = d3.rgb(0,109,44);
 
 function colorId (selection, value, id, color, max, min) {
   var colorpleth = d3.scale.linear()
-  .range([color[0], color[1]]);
-  colorpleth.domain([min,max]);
+  .range([color[0], color[1]]).domain([min,max]);
+  
   //console.log("ID: "+id);
   //console.log("Value: "+value);
+  
   selection.select("[id='"+id+"']")
   .data(value)
-    .style("fill", function () {
+    .attr("fill", function () {
       var val = value;
       if(val) {
+        
         return colorpleth(val);
       }
       else {
         console.log("ERROR, does not exist: "+id);
         return green;
       }
-    });
+    });    
 }
 
-// TODO implement change darken color by hover and keep color by click
-// and uncheck by second click. Return id of Polygon for groupedBarChart
-function polygonHover (selection) {
-  selection.selectAll("polygon")
+function polygonInteraction (selection, pointer, color, max, min) {
+  selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
-      d3.select(this).attr("fill", green);
+      d3.select(this).attr("fill-opacity", .5);
     })
-    .on("mouseout", function (d) {
+    .on("mouseout", function () {
       d3.select(this)
-      .attr("fill", "#fff");
+      .attr("fill-opacity", 1);
     })
-    .append("text")
-    .style("pointer-events", "none");
+    .on("click", function () {
+      var value = d3.select(this).select("title").text();
+      if (d3.select(this).attr("checked") == null) {
+        d3.select(this).attr("checked", true);
+        d3.select(this).attr("fill", color[1].darker(1.1))
+        .attr("fill-opacity", 1);
+      } 
+      else if (d3.select(this).attr("checked")){
+        d3.select(this).attr("checked", false);
+        colorId(selection, value, d3.select(this).attr("id"), color, max, min);
+        d3.select(this).attr("checked", null);
+      }
+      console.log("Give me the ID: "+ d3.select(this).attr("id"));
+    });
 }
 
 function initMap (data, value, color, max, min) {
@@ -180,7 +192,13 @@ function initMap (data, value, color, max, min) {
 
     for (var i = 0; i < data.length; ++i) {
       colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
+      //Tooltip and tool
+      innerSVG.select("[id='"+data[i]["number"]+"']").attr("class", "pointer")
+      .append("title").text(function() {
+         return String(value[i]);
+      });
     }
+    polygonInteraction(innerSVG, ".pointer", color, max, min);
 
   });
 }

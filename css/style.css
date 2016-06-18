@@ -232,7 +232,6 @@ div.bar {
     font-size: 9px;
 }
 
-svg text {
-     pointer-events: none;
+#Viertel_Flaeche {
+	cursor: pointer;
 }
-
