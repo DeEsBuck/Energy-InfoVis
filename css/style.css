@@ -50,7 +50,7 @@ h3, h4 {
 	margin-left: 20px;
 }
 
-@media screen and (max-width: 1279px) {
+@media screen and (max-width: 1024px) {
 	#head,
 	#head h2 {
 		margin-left: 5px;
@@ -110,7 +110,7 @@ h3, h4 {
 	}
 }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1025px) and (max-width: 1440px) {
 	#main-panel,
 	#second-panel {
 		height: auto;
