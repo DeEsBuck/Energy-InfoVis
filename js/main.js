@@ -147,7 +147,7 @@ function colorId (selection, value, id, color, max, min) {
 function polygonInteraction (selection, pointer, color, max, min) {
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
-      d3.select(this).attr("fill-opacity", .5);
+      d3.select(this).attr("fill-opacity", .7);
     })
     .on("mouseout", function () {
       d3.select(this)
