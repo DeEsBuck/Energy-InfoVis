@@ -1,5 +1,5 @@
 # Energy-InfoVis
-## Gestaltung einer Informationsvisualisierung zur Untersuchung des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen Kölns
+#### Gestaltung einer Informationsvisualisierung zur Untersuchung des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen Kölns
 
 ### Deployment
 Um die SVG Grafiken zu rendern, musst Du die Seite über einen Nodejs HTTP-Server starten.
@@ -18,5 +18,11 @@ Für weitere Infos bitte das D3 Repository von Mike Bostock https://github.com/d3
 
 Für die Legende habe ich das Framework von https://github.com/jgoodall/d3-colorlegend verwendet.
 
-die Statdkarte ist aus https://upload.wikimedia.org/wikipedia/commons/f/f3/Cologne_subdivisions.svg
+die Stadtkarte ist aus https://upload.wikimedia.org/wikipedia/commons/f/f3/Cologne_subdivisions.svg
  entnommen und leicht modifiziert worden.
+
+ ---
+
+ ### Demo
+
+ Eine Momentaufnahme des aktuellen Entwicklungsstand kann hier getestet werden http://dsb.dsbuck.de/
