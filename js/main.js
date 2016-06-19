@@ -1,17 +1,22 @@
 
+// Kategorien Werte für Map und legende
 var sumPhh = []; //Alle haushalte je statdteil
 var dataname = []; //Stadtteil Namen
 var diversity = []; //einwohnerqkm
-var onePhh = [], twoPhh = [], threePhh = [], fourPhh = [], fivePhh = [];
-var _onePhh = [], _twoPhh = [], _threePhh = [], _fourPhh = [], _fivePhh = [];
-var residentPhh = []; //Einwohner pro Stadtteil
+var sumOnePhh = [], sumTwoPhh = [], sumThreePhh = [], sumFourPhh = [], sumFivePhh = []; // Gesamt Stromverbrauch pro Haushalt
+var onePhh = [], twoPhh = [], threePhh = [], fourPhh = [], fivePhh = []; // Anzahl der pHH
+var _onePhh = [], _twoPhh = [], _threePhh = [], _fourPhh = [], _fivePhh = []; // Einwohneranzahl pro Haushalt
+var avgOnePhh = [], avgTwoPhh = [], avgThreePhh = [], avgFourPhh = [], avgFivePhh = []; // Durchschnitts pro Kopf Energie
+var resident = []; //Einwohner pro Stadtteil
 var energyHeadSumPhh = []; // Pro Kopf Energie verbrauch
 var energySumPhh = []; //Gesamt Energie verbrauch pro Haushalt
-// Kennzahlen
-var energyPhh = [2050,3440,4050,4750,5370];
-var germanEnergyHead = 8372.27;
-var energyheadPhh = []; // Hilfswerte Energieverbrauch pro kopf je phh
 
+// Kennzahlen
+var energyPhh = [2050,3440,4050,4750,5370]; // Der gesamt Stromverbrauch einer Haushaltsgröße
+var germanEnergyHead = 8372.27;
+var energyheadPhh = []; // Hilfswerte Energieverbrauch pro kopf je Haushaltsgröße
+
+// Kennzahlen für Numbers Panel
 var allResidents = 0;
 var cityEnergy = 0;
 var cityEnergyHead = 0;
@@ -24,7 +29,7 @@ var groupEnergyHead = 0;
 var groupPhh = 0;
 var groupSize = 0;
 
-var green = d3.rgb(0,109,44);
+var red = d3.rgb(222,45,38);
 var linearGreen = [d3.rgb(237,248,251),d3.rgb(0,109,44)];
 var linearRed = [d3.rgb(254,224,210),d3.rgb(222,45,38)];
 var linearBlue = [d3.rgb(222,235,247),d3.rgb(49,130,189)];
@@ -55,7 +60,7 @@ function valuesDetails (data) {
     sumPhh.push(+data[j]["sumphh"]);
     dataname.push(data[j]["number"]);
     diversity.push(+data[j]["einwohnerqkm"]);
-    residentPhh.push(+data[j]["einwohner"]);
+    resident.push(+data[j]["einwohner"]);
 
     for (l = 0; l < countPhh(data).length; l++) {
       energyheadPhh[l] = energyPhh[l]/(l+1);
@@ -66,25 +71,39 @@ function valuesDetails (data) {
     fourPhh.push(+data[j]["vierphh"]);
     fivePhh.push(+data[j]["funfphh"]); 
 
-    energyHeadSumPhh.push(Math.floor((onePhh[j]*energyheadPhh[0]+
+    energyHeadSumPhh.push(Math.floor((
+      onePhh[j]*energyheadPhh[0]+
       twoPhh[j]*2*energyheadPhh[1]+
       threePhh[j]*3*energyheadPhh[2]+
       fourPhh[j]*4*energyheadPhh[3]+
-      fivePhh[j]*5*energyheadPhh[4])/residentPhh[j]));
+      fivePhh[j]*5*energyheadPhh[4])/resident[j]));
 
-    energySumPhh.push(onePhh[j]*energyPhh[0]+
-      twoPhh[j]*energyPhh[1]+
-      threePhh[j]*energyPhh[2]+
-      fourPhh[j]*energyPhh[3]+
-      fivePhh[j]*energyPhh[4]);
+    energySumPhh.push(
+      onePhh[j]*energyheadPhh[0]+
+      twoPhh[j]*2*energyheadPhh[1]+
+      threePhh[j]*3*energyheadPhh[2]+
+      fourPhh[j]*4*energyheadPhh[3]+
+      fivePhh[j]*5*energyheadPhh[4]);
 
-    for (var i = 0; i < data.length; i++) {
-      _onePhh[i] = onePhh[i]*energyheadPhh[0];
-      _twoPhh[i] = twoPhh[i]*energyheadPhh[1];
-      _threePhh[i] = threePhh[i]*energyheadPhh[2];
-      _fourPhh[i] = Math.floor(fourPhh[i]*energyheadPhh[3]);
-      _fivePhh[i] = fivePhh[i]*energyheadPhh[4];
-    }
+    _onePhh[j] = onePhh[j];
+    _twoPhh[j] = twoPhh[j]*2;
+    _threePhh[j] = threePhh[j]*3;
+    _fourPhh[j] = fourPhh[j]*4;
+    _fivePhh[j] = fivePhh[j]*5;
+
+    sumOnePhh[j] = onePhh[j]*energyPhh[0];
+    sumTwoPhh[j] = twoPhh[j]*energyPhh[1];
+    sumThreePhh[j] = threePhh[j]*energyPhh[2];
+    sumFourPhh[j] = fourPhh[j]*energyPhh[3];
+    sumFivePhh[j] = fivePhh[j]*energyPhh[4];
+
+    // Check if really needed 86 rows
+    avgOnePhh[j] = sumOnePhh[j] / _onePhh[j];
+    avgTwoPhh[j] = sumTwoPhh[j] / _twoPhh[j];
+    avgThreePhh[j] = sumThreePhh[j] / _threePhh[j];
+    avgFourPhh[j] = sumFourPhh[j] / _fourPhh[j];
+    avgFivePhh[j] = sumFivePhh[j] / _fivePhh[j];
+    
   }
 
   for (var k = 0; k < countPhh(data).length; k++) {
@@ -131,17 +150,17 @@ function colorId (selection, value, id, color, max, min) {
     .attr("fill", function () {
       var val = value;
       if(val) {
-        
         return colorpleth(val);
       }
       else {
         console.log("ERROR, does not exist: "+id);
-        return green;
+        return red;
       }
     });    
 }
 
-function polygonInteraction (selection, pointer, color, max, min) {
+function polygonInteraction (selection, pointer, color, max, min, modi) {
+  var objectId = "", value = "";
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
       d3.select(this).attr("fill-opacity", .7);
@@ -151,22 +170,70 @@ function polygonInteraction (selection, pointer, color, max, min) {
       .attr("fill-opacity", 1);
     })
     .on("click", function () {
-      var value = d3.select(this).select("title").text();
+      value = d3.select(this).attr("value");
+      objectId = d3.select(this).attr("id");
+      var obj = picker(objectId, value, modi);
+      console.log(obj);
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
         d3.select(this).attr("fill", color[1].darker(1.1))
         .attr("fill-opacity", 1);
+        console.log("ID to add: "+ objectId +" and Value: "+ value);
       } 
       else if (d3.select(this).attr("checked")){
-        d3.select(this).attr("checked", false);
         colorId(selection, value, d3.select(this).attr("id"), color, max, min);
         d3.select(this).attr("checked", null);
+        console.log("ID to remove: "+ objectId +" and Value: "+ value);
       }
-      console.log("Give me the ID: "+ d3.select(this).attr("id"));
     });
 }
 
-function initMap (data, value, color, max, min) {
+// TODO das Bucket muss Werte pro gewählten Stadtteil (Modi) 
+// mit Werten für jeden phh beeinhalten
+// value := gesamtwert der Modi Eingabe pro stadtteil
+// modi := der Kontext der Map
+// key := Stadtteilekennung
+function picker (key, value, modi) {
+  
+  // Verschiedene Objects nach modi := 
+  // if modi == modi.index then load/create Object
+  // {key:key, value:value, einphh:einphh, zweiphh:zweiphh, dreiphh:dreiphh, vierphh:vierphh, funfphh:funfphh}
+  // für groupVariablen die werte pro key summieren
+ 
+  console.log("modi: "+modi);
+
+  // Bucket für pro Haushaltsgrößen panel
+  var bucket = d3.map([
+    {name: "id", value: dataname},
+    {name: "einphh", value: onePhh}, // Summe/Anzahl der HHg
+    {name: "zweiphh", value: twoPhh}, 
+    {name: "dreiphh", value: threePhh}, 
+    {name: "vierphh", value: fourPhh},
+    {name: "fünfphh", value: fivePhh}, 
+    {name: "residenteinphh", value: _onePhh}, // Einwohneranzahl pro HHg
+    {name: "residentzweiphh", value: _twoPhh},
+    {name: "residentdreiphh", value: _threePhh}, 
+    {name: "residentvierphh", value: _fourPhh},
+    {name: "residentfünfphh", value: _fivePhh},
+    {name: "kwheinphh", value: sumOnePhh}, // Summe Stromverbrauch pro HHg
+    {name: "kwhzweiphh", value: sumTwoPhh},
+    {name: "kwhdreiphh", value: sumThreePhh}, 
+    {name: "kwhvierphh", value: sumFourPhh},
+    {name: "kwhfünfphh", value: sumFivePhh},
+    {name: "avgkwhheadeinphh", value: avgOnePhh}, //Pro Kopf Stromverbrauch pro HHg
+    {name: "avgkwhheadzweiphh", value: avgTwoPhh},
+    {name: "avgkwhheaddreiphh", value: avgThreePhh}, 
+    {name: "avgkwhheadvierphh", value: avgFourPhh},
+    {name: "avgkwhheadfünfphh", value: avgFivePhh}
+    ], 
+    function (d) {
+      return d.name;
+    });
+
+  return bucket
+}
+
+function initMap (data, value, color, max, min, modi) {
   var mainPanel = d3.select("#main-panel")
   .append("svg")
   .attr({"width": 776, "height": 800});
@@ -189,19 +256,26 @@ function initMap (data, value, color, max, min) {
 
     for (var i = 0; i < data.length; ++i) {
       colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
-      //Tooltip and tool
-      innerSVG.select("[id='"+data[i]["number"]+"']").attr("class", "pointer")
+      //Tooltip and define polygons pointer
+      innerSVG.select("[id='"+data[i]["number"]+"']")
+      .attr("class", "pointer")
+      .attr("value", String(value[i]))
       .append("title").text(function() {
-         return String(value[i]);
+         return "ID: "+data[i]["number"]+", Wert: "+String(value[i]);
       });
     }
-    polygonInteraction(innerSVG, ".pointer", color, max, min);
+    polygonInteraction(innerSVG, ".pointer", color, max, min, modi);
 
   });
 }
 
 
+
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
+function selectedBarChart (data, panelName) {
+
+}
+
 function groupedBarChart (data, panelName) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = 6000 - margin.left - margin.right,
@@ -236,8 +310,8 @@ function groupedBarChart (data, panelName) {
 // Liste mit Spaltenname der Haushalte
  var phhName = d3.keys(data[0])
   .filter(function(key) { 
-    return key !== "number" 
-          && key !== "stadtteil"
+    return key !== "number"
+          &&key !== "stadtteil"
           && key !== "sumphh"
           && key !== "prohh"
           && key !== "einwohnerqkm"
@@ -319,56 +393,56 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
   if (error) throw error;
   
   valuesDetails(data);
-  initMap(data, residentPhh, linearGreen, 41814, 1084);
+  initMap(data, resident, linearGreen, 41814, 1084, 0);
 
   function switchLegends (index) {
     switch (index) {
       case "0": 
-        legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
-        initMap(data, residentPhh, linearGreen, 41814, 1084);
+        legende(resident, linearGreen, "Einwohneranzahl", 0);
+        initMap(data, resident, linearGreen, 41814, 1084, 0);
       break;
       case "1":
         legende(diversity, linearRed, "Wohndichte", 1);
-        initMap(data, diversity, linearRed, 13606, 170);
+        initMap(data, diversity, linearRed, 13606, 170, 1);
       break;
       case "2":
         legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", 2);
-        initMap(data, energyHeadSumPhh, linearLila, 1722, 1338);
+        initMap(data, energyHeadSumPhh, linearLila, 1722, 1338, 2);
       break;
       case "3":
         legende(sumPhh, linearGray, "Gesamt Haushaltsgroessen", 3);
-        initMap(data, sumPhh, linearGray, 25105, 459);
+        initMap(data, sumPhh, linearGray, 25105, 459, 3);
       break;
       case "4":
         legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", 4);
-        initMap(data, energySumPhh, linearOrange, 65481260, 1588240);
+        initMap(data, energySumPhh, linearOrange, 65481260, 1588240, 4);
       break;
       case "5":
-        legende(_onePhh, linearBlue, "Stromverbrauch Ein-PHH", 5);
-        initMap(data, _onePhh, linearBlue, 35009900, 264450);
+        legende(sumOnePhh, linearBlue, "Stromverbrauch Ein-PHH", 5);
+        initMap(data, sumOnePhh, linearBlue, 35009900, 264450, 5);
       break;
       case "6":
-        legende(_twoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6);
-        initMap(data, _twoPhh, linearBlue, 9379160, 252840);
+        legende(sumTwoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6);
+        initMap(data, sumTwoPhh, linearBlue, 18758320, 505680, 6);
       break;
       case "7":
-        legende(_threePhh, linearBlue, "Stromverbrauch Drei-PHH", 7);
-        initMap(data, _threePhh, linearBlue, 3160350, 120150);
+        legende(sumThreePhh, linearBlue, "Stromverbrauch Drei-PHH", 7);
+        initMap(data, sumThreePhh, linearBlue, 9481050, 360450, 7);
       break;
       case "8":
-        legende(_fourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8);
-        initMap(data, _fourPhh, linearBlue, 1820437, 90250);
+        legende(sumFourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8);
+        initMap(data, sumFourPhh, linearBlue, 7281750, 361000, 8);
       break;
       case "9":
-        legende(_fivePhh, linearBlue, "Stromverbrauch Fuenf-PHH", 9);
-        initMap(data, _fivePhh, linearBlue, 920418, 19332);
+        legende(sumFivePhh, linearBlue, "Stromverbrauch Fuenf-PHH", 9);
+        initMap(data, sumFivePhh, linearBlue, 4602090, 96660, 9);
       break; 
     }  
   }
 
   var prev = "0";
   var radioIndex = "0";
-  legende(residentPhh, linearGreen, "Einwohneranzahl", 0);
+  legende(resident, linearGreen, "Einwohneranzahl", 0);
 
   $("input[name='modi']").on("click",function(){
     radioIndex =  $(this).val();
@@ -388,7 +462,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
 ////////////////Balken diagramme für Detail Panel////////////////////
   var testdata = [12837,3677,1011,552,215];
   
-  groupedBarChart(data, "#detail-panel");
+  groupedBarChart(data, "#detail-panel3");
  
    
 });
