@@ -24,6 +24,7 @@ var groupEnergyHead = 0;
 var groupPhh = 0;
 var groupSize = 0;
 
+var green = d3.rgb(0,109,44);
 var linearGreen = [d3.rgb(237,248,251),d3.rgb(0,109,44)];
 var linearRed = [d3.rgb(254,224,210),d3.rgb(222,45,38)];
 var linearBlue = [d3.rgb(222,235,247),d3.rgb(49,130,189)];
@@ -120,14 +121,10 @@ function legende (data, color, title, id) {
 }
 
 ////////////////////STADTKARTE//////////////////////////
-var green = d3.rgb(0,109,44);
 
 function colorId (selection, value, id, color, max, min) {
   var colorpleth = d3.scale.linear()
   .range([color[0], color[1]]).domain([min,max]);
-  
-  //console.log("ID: "+id);
-  //console.log("Value: "+value);
   
   selection.select("[id='"+id+"']")
   .data(value)
@@ -339,7 +336,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
         initMap(data, energyHeadSumPhh, linearLila, 1722, 1338);
       break;
       case "3":
-        legende(sumPhh, linearGray, "Gesamt Haushaltsgrößen", 3);
+        legende(sumPhh, linearGray, "Gesamt Haushaltsgroessen", 3);
         initMap(data, sumPhh, linearGray, 25105, 459);
       break;
       case "4":
@@ -363,7 +360,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
         initMap(data, _fourPhh, linearBlue, 1820437, 90250);
       break;
       case "9":
-        legende(_fivePhh, linearBlue, "Stromverbrauch Fünf-PHH", 9);
+        legende(_fivePhh, linearBlue, "Stromverbrauch Fuenf-PHH", 9);
         initMap(data, _fivePhh, linearBlue, 920418, 19332);
       break; 
     }  
