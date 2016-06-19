@@ -1,5 +1,5 @@
 # Energy-InfoVis
-#### Gestaltung einer Informationsvisualisierung zur Untersuchung des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen Kölns
+##### Gestaltung einer Informationsvisualisierung zur Untersuchung des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen Kölns
 
 ### Deployment
 Um die SVG Grafiken zu rendern, musst Du die Seite über einen Nodejs HTTP-Server starten.
@@ -24,5 +24,4 @@ die Stadtkarte ist aus https://upload.wikimedia.org/wikipedia/commons/f/f3/Colog
  ---
 
  ### Demo
-
  Eine Momentaufnahme des aktuellen Entwicklungsstand kann hier getestet werden http://dsb.dsbuck.de/
