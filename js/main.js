@@ -130,141 +130,6 @@ function valuesDetails (data) {
   }
 }
 
-//TODO legende auch für mehr farben linear vorbereiten
-function legende (data, color, title, id) {
-  var lScale = d3.scale.linear()
-  .domain([d3.min(data), d3.max(data)])
-  .range([color[0], color[1]]);
-  colorlegend("#legende", lScale, "linear", 
-  {title: title, boxWidth: 38, linearBoxes: 20, id: id});
-}
-
-////////////////////STADTKARTE//////////////////////////
-
-function colorId (selection, value, id, color, max, min) {
-  var colorpleth = d3.scale.linear()
-  .range([color[0], color[1]]).domain([min,max]);
-  
-  selection.select("[id='"+id+"']")
-  .data(value)
-    .attr("fill", function () {
-      var val = value;
-      if(val) {
-        return colorpleth(val);
-      }
-      else {
-        console.log("ERROR, does not exist: "+id);
-        return red;
-      }
-    });    
-}
-
-function polygonInteraction (selection, pointer, color, max, min, modi) {
-  var objectId = "", value = "", obj = [];
-  createBar(modi, '#detail-panel');
-  selection.select("#Viertel_Flaeche").selectAll(pointer)
-    .on("mouseover", function () {
-      d3.select(this).attr("fill-opacity", .7);
-    })
-    .on("mouseout", function () {
-      d3.select(this)
-      .attr("fill-opacity", 1);
-    })
-    .on("click", function () {
-      value = d3.select(this).attr("value");
-      objectId = d3.select(this).attr("id");
-
-      if (d3.select(this).attr("checked") == null) {
-        d3.select(this).attr("checked", true);
-        d3.select(this).attr("fill", color[1].darker(1.1))
-        .attr("fill-opacity", 1);
-        
-        obj = addBar(modi, objectId, value);
-        console.log('add this: '+obj.id+' of '+obj.key+' with '+obj.value);
-
-      } 
-      else if (d3.select(this).attr("checked")){
-        colorId(selection, value, d3.select(this).attr("id"), color, max, min);
-        d3.select(this).attr("checked", null);
-
-        console.log('remove this: '+objectId+' for real '+obj.value);
-        obj = removeBar(objectId);
-        try {
-          console.log('remove this: '+objectId+' for real '+obj.id);
-        }
-        catch (e) {
-          console.log('removed: '+e);
-        }
-      }
-    });
-    return objectId;
-}
-
-var bucketView = [{}];
-function addBar (key, id, value) {
-  bucketView = d3.map([{key: key, id: id, value: value}],
-    function (d) {
-      return d.key;
-    });  
-  console.log(bucketView.values());
-  return bucketView.get(key);
-}
-
-function removeBar (id) {
-  bucketView.remove(id);
-  return bucketView.get(id);
-}
-
-function createBar (name, panelName) {
-  var h = 260, w = $(panelName).innerWidth;
-
-  console.log('create barChart: '+name);
-  /*var svg = d3.select(panelName)
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);*/
-
-}
-
-
-function initMap (data, value, color, max, min, modi) {
-  var mainPanel = d3.select("#main-panel")
-  .append("svg")
-  .attr({"width": 776, "height": 800});
-
-  var svgFile = "cologne-stadtteile.svg";
-  d3.xml(svgFile, "image/svg+xml", function (error, xml) {
-    if (error) {console.log(error); return;}
-    
-    mainPanel.node().appendChild(xml.documentElement);
-    
-    mainPanel.select("#TT_Stadtteile_copy")
-    .selectAll("path")
-    .attr("fill", "#000000");
-
-     mainPanel.select("#TT_Bezirke_copy")
-    .selectAll("path")
-    .attr("fill", "#000000"); 
-
-    var innerSVG = mainPanel.selectAll("svg");
-    innerSVG.attr('id', modi);
-
-    for (var i = 0; i < data.length; ++i) {
-      colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
-      //Tooltip and define polygons pointer
-      innerSVG.select("[id='"+data[i]["number"]+"']")
-      .attr("class", "pointer")
-      .attr("value", String(value[i]))
-      .append("title").text(function() {
-         return "ID: "+data[i]["number"]+", Wert: "+String(value[i]);
-      });
-    }
-    polygonInteraction(innerSVG, ".pointer", color, max, min, modi);
-  });
-}
-
-
-
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
 
 function groupedBarChart (data, panelName) {
@@ -375,6 +240,186 @@ function groupedBarChart (data, panelName) {
       .attr("dy", ".35em")
       .style("text-anchor", "end")
       .text(function(d) { return d; });
+}
+
+/**
+* das Bucket enthält Werte pro gewählten Stadtteil (Modi) 
+* mit Werten für jeden phh
+* @param key == modi := der Kontext der Map
+* @param index == id := Stadtteilekennung
+* @return
+**/
+function picker (key, index) {
+  // Bucket für pro Haushaltsgrößen panel
+  var bigBucket = d3.map([
+    {key: "id", value: dataname[index]}, // id == index referenz
+    {key: "einwohner", value: resident[index]},
+    {key: "wohndichte", value: diversity[index]},
+    {key: "kwhhead", value: energyHeadSumPhh[index]},
+    {key: "allphh", value: sumPhh[index]},
+    {key: "kwhallphh", value: energySumPhh[index]},
+    {key: "einphh", value: onePhh[index]}, // Summe/Anzahl der HHg
+    {key: "zweiphh", value: twoPhh[index]}, 
+    {key: "dreiphh", value: threePhh[index]}, 
+    {key: "vierphh", value: fourPhh[index]},
+    {key: "fünfphh", value: fivePhh[index]}, 
+    {key: "residenteinphh", value: _onePhh[index]}, // Einwohneranzahl pro HHg
+    {key: "residentzweiphh", value: _twoPhh[index]},
+    {key: "residentdreiphh", value: _threePhh[index]}, 
+    {key: "residentvierphh", value: _fourPhh[index]},
+    {key: "residentfünfphh", value: _fivePhh[index]},
+    {key: "kwheinphh", value: sumOnePhh[index]}, // Summe Stromverbrauch pro HHg
+    {key: "kwhzweiphh", value: sumTwoPhh[index]},
+    {key: "kwhdreiphh", value: sumThreePhh[index]}, 
+    {key: "kwhvierphh", value: sumFourPhh[index]},
+    {key: "kwhfünfphh", value: sumFivePhh[index]},
+    {key: "avgkwhheadeinphh", value: avgOnePhh[index]}, //Pro Kopf Stromverbrauch pro HHg
+    {key: "avgkwhheadzweiphh", value: avgTwoPhh[index]},
+    {key: "avgkwhheaddreiphh", value: avgThreePhh[index]}, 
+    {key: "avgkwhheadvierphh", value: avgFourPhh[index]},
+    {key: "avgkwhheadfünfphh", value: avgFivePhh[index]}
+    ], 
+    function (d) {
+      return d.key;
+    });
+
+  console.log(bigBucket.get(key));
+
+  return bigBucket.get(key);
+}
+
+var tempBucket = [{}];
+function addBar (key, id, value) {
+  tempBucket = d3.map([{key: key, id: id, value: value}],
+    function (d) {
+      return d.key;
+    });  
+  //console.log(bucketView.values());
+  return tempBucket.get(key);
+}
+
+function removeBar (id) {
+  tempBucket.remove(id);
+  return tempBucket.get(id);
+}
+
+function createBar (name, panelName) {
+  var h = 260, w = $(panelName).innerWidth;
+
+  console.log('create barChart: '+name);
+  /*var svg = d3.select(panelName)
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);*/
+
+}
+
+//TODO legende auch für mehr farben linear vorbereiten
+function legende (data, color, title, id) {
+  var lScale = d3.scale.linear()
+  .domain([d3.min(data), d3.max(data)])
+  .range([color[0], color[1]]);
+  colorlegend("#legende", lScale, "linear", 
+  {title: title, boxWidth: 38, linearBoxes: 20, id: id});
+}
+
+////////////////////STADTKARTE//////////////////////////
+
+function colorId (selection, value, id, color, max, min) {
+  var colorpleth = d3.scale.linear()
+  .range([color[0], color[1]]).domain([min,max]);
+  
+  selection.select("[id='"+id+"']")
+  .data(value)
+    .attr("fill", function () {
+      var val = value;
+      if(val) {
+        return colorpleth(val);
+      }
+      else {
+        console.log("ERROR, does not exist: "+id);
+        return red;
+      }
+    });    
+}
+
+function polygonInteraction (selection, pointer, color, max, min, modi) {
+  var objectId = "", value = "", obj = [], index = 0;
+  createBar(modi, '#detail-panel');
+  selection.select("#Viertel_Flaeche").selectAll(pointer)
+    .on("mouseover", function () {
+      d3.select(this).attr("fill-opacity", .7);
+    })
+    .on("mouseout", function () {
+      d3.select(this)
+      .attr("fill-opacity", 1);
+    })
+    .on("click", function () {
+      value = d3.select(this).attr("value");
+      objectId = d3.select(this).attr("id");
+      index = d3.select(this).attr("index");
+
+      if (d3.select(this).attr("checked") == null) {
+        d3.select(this).attr("checked", true);
+        d3.select(this).attr("fill", color[1].darker(1.1))
+        .attr("fill-opacity", 1);
+        obj = picker(modi, index);
+
+        var bar = addBar(modi, objectId, value);
+        console.log('add this: '+bar.id+' of '+obj.key+' with '+obj.value);
+
+      } 
+      else if (d3.select(this).attr("checked")){
+        colorId(selection, value, d3.select(this).attr("id"), color, max, min);
+        d3.select(this).attr("checked", null);
+        
+        bar = removeBar(index);
+        try {
+          console.log('remove this: '+objectId+' for real '+bar.id);
+        }
+        catch (e) {
+          console.log('removed: '+objectId+', error: '+e);
+        }
+      }
+    });
+    return objectId;
+}
+
+function initMap (data, value, color, max, min, modi) {
+  var mainPanel = d3.select("#main-panel")
+  .append("svg")
+  .attr({"width": 776, "height": 800});
+
+  var svgFile = "cologne-stadtteile.svg";
+  d3.xml(svgFile, "image/svg+xml", function (error, xml) {
+    if (error) {console.log(error); return;}
+    
+    mainPanel.node().appendChild(xml.documentElement);
+    
+    mainPanel.select("#TT_Stadtteile_copy")
+    .selectAll("path")
+    .attr("fill", "#000000");
+
+     mainPanel.select("#TT_Bezirke_copy")
+    .selectAll("path")
+    .attr("fill", "#000000"); 
+
+    var innerSVG = mainPanel.selectAll("svg");
+    innerSVG.attr('id', modi);
+
+    for (var i = 0; i < data.length; ++i) {
+      colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
+      //Tooltip and define polygons pointer
+      innerSVG.select("[id='"+data[i]["number"]+"']")
+      .attr("class", "pointer")
+      .attr("value", String(value[i]))
+      .attr("index", i)
+      .append("title").text(function() {
+         return "ID: "+data[i]["number"]+", Wert: "+String(value[i]);
+      });
+    }
+    polygonInteraction(innerSVG, ".pointer", color, max, min, modi);
+  });
 }
 
 
