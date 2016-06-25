@@ -160,7 +160,8 @@ function colorId (selection, value, id, color, max, min) {
 }
 
 function polygonInteraction (selection, pointer, color, max, min, modi) {
-  var objectId = "", value = "";
+  var objectId = "", value = "", obj = [];
+  createBar(modi, '#detail-panel');
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
       d3.select(this).attr("fill-opacity", .7);
@@ -172,66 +173,59 @@ function polygonInteraction (selection, pointer, color, max, min, modi) {
     .on("click", function () {
       value = d3.select(this).attr("value");
       objectId = d3.select(this).attr("id");
-      var obj = picker(objectId, value, modi);
-      console.log(obj);
+
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
         d3.select(this).attr("fill", color[1].darker(1.1))
         .attr("fill-opacity", 1);
-        console.log("ID to add: "+ objectId +" and Value: "+ value);
+        
+        obj = addBar(modi, objectId, value);
+        console.log('add this: '+obj.id+' of '+obj.key+' with '+obj.value);
+
       } 
       else if (d3.select(this).attr("checked")){
         colorId(selection, value, d3.select(this).attr("id"), color, max, min);
         d3.select(this).attr("checked", null);
-        console.log("ID to remove: "+ objectId +" and Value: "+ value);
+
+        console.log('remove this: '+objectId+' for real '+obj.value);
+        obj = removeBar(objectId);
+        try {
+          console.log('remove this: '+objectId+' for real '+obj.id);
+        }
+        catch (e) {
+          console.log('removed: '+e);
+        }
       }
     });
+    return objectId;
 }
 
-// TODO das Bucket muss Werte pro gewählten Stadtteil (Modi) 
-// mit Werten für jeden phh beeinhalten
-// value := gesamtwert der Modi Eingabe pro stadtteil
-// modi := der Kontext der Map
-// key := Stadtteilekennung
-function picker (key, value, modi) {
-  
-  // Verschiedene Objects nach modi := 
-  // if modi == modi.index then load/create Object
-  // {key:key, value:value, einphh:einphh, zweiphh:zweiphh, dreiphh:dreiphh, vierphh:vierphh, funfphh:funfphh}
-  // für groupVariablen die werte pro key summieren
- 
-  console.log("modi: "+modi);
-
-  // Bucket für pro Haushaltsgrößen panel
-  var bucket = d3.map([
-    {name: "id", value: dataname},
-    {name: "einphh", value: onePhh}, // Summe/Anzahl der HHg
-    {name: "zweiphh", value: twoPhh}, 
-    {name: "dreiphh", value: threePhh}, 
-    {name: "vierphh", value: fourPhh},
-    {name: "fünfphh", value: fivePhh}, 
-    {name: "residenteinphh", value: _onePhh}, // Einwohneranzahl pro HHg
-    {name: "residentzweiphh", value: _twoPhh},
-    {name: "residentdreiphh", value: _threePhh}, 
-    {name: "residentvierphh", value: _fourPhh},
-    {name: "residentfünfphh", value: _fivePhh},
-    {name: "kwheinphh", value: sumOnePhh}, // Summe Stromverbrauch pro HHg
-    {name: "kwhzweiphh", value: sumTwoPhh},
-    {name: "kwhdreiphh", value: sumThreePhh}, 
-    {name: "kwhvierphh", value: sumFourPhh},
-    {name: "kwhfünfphh", value: sumFivePhh},
-    {name: "avgkwhheadeinphh", value: avgOnePhh}, //Pro Kopf Stromverbrauch pro HHg
-    {name: "avgkwhheadzweiphh", value: avgTwoPhh},
-    {name: "avgkwhheaddreiphh", value: avgThreePhh}, 
-    {name: "avgkwhheadvierphh", value: avgFourPhh},
-    {name: "avgkwhheadfünfphh", value: avgFivePhh}
-    ], 
+var bucketView = [{}];
+function addBar (key, id, value) {
+  bucketView = d3.map([{key: key, id: id, value: value}],
     function (d) {
-      return d.name;
-    });
-
-  return bucket
+      return d.key;
+    });  
+  console.log(bucketView.values());
+  return bucketView.get(key);
 }
+
+function removeBar (id) {
+  bucketView.remove(id);
+  return bucketView.get(id);
+}
+
+function createBar (name, panelName) {
+  var h = 260, w = $(panelName).innerWidth;
+
+  console.log('create barChart: '+name);
+  /*var svg = d3.select(panelName)
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);*/
+
+}
+
 
 function initMap (data, value, color, max, min, modi) {
   var mainPanel = d3.select("#main-panel")
@@ -253,6 +247,7 @@ function initMap (data, value, color, max, min, modi) {
     .attr("fill", "#000000"); 
 
     var innerSVG = mainPanel.selectAll("svg");
+    innerSVG.attr('id', modi);
 
     for (var i = 0; i < data.length; ++i) {
       colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
@@ -265,16 +260,12 @@ function initMap (data, value, color, max, min, modi) {
       });
     }
     polygonInteraction(innerSVG, ".pointer", color, max, min, modi);
-
   });
 }
 
 
 
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
-function selectedBarChart (data, panelName) {
-
-}
 
 function groupedBarChart (data, panelName) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -391,51 +382,51 @@ function groupedBarChart (data, panelName) {
 
 d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
   if (error) throw error;
-  
+
   valuesDetails(data);
-  initMap(data, resident, linearGreen, 41814, 1084, 0);
+  initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
 
   function switchLegends (index) {
     switch (index) {
       case "0": 
         legende(resident, linearGreen, "Einwohneranzahl", 0);
-        initMap(data, resident, linearGreen, 41814, 1084, 0);
+        initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
       break;
       case "1":
         legende(diversity, linearRed, "Wohndichte", 1);
-        initMap(data, diversity, linearRed, 13606, 170, 1);
+        initMap(data, diversity, linearRed, 13606, 170, "wohndichte");
       break;
       case "2":
         legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", 2);
-        initMap(data, energyHeadSumPhh, linearLila, 1722, 1338, 2);
+        initMap(data, energyHeadSumPhh, linearLila, 1722, 1338, "kwhhead");
       break;
       case "3":
         legende(sumPhh, linearGray, "Gesamt Haushaltsgroessen", 3);
-        initMap(data, sumPhh, linearGray, 25105, 459, 3);
+        initMap(data, sumPhh, linearGray, 25105, 459, "allphh");
       break;
       case "4":
         legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", 4);
-        initMap(data, energySumPhh, linearOrange, 65481260, 1588240, 4);
+        initMap(data, energySumPhh, linearOrange, 65481260, 1588240, "kwhallphh");
       break;
       case "5":
         legende(sumOnePhh, linearBlue, "Stromverbrauch Ein-PHH", 5);
-        initMap(data, sumOnePhh, linearBlue, 35009900, 264450, 5);
+        initMap(data, sumOnePhh, linearBlue, 35009900, 264450, "kwheinphh");
       break;
       case "6":
         legende(sumTwoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6);
-        initMap(data, sumTwoPhh, linearBlue, 18758320, 505680, 6);
+        initMap(data, sumTwoPhh, linearBlue, 18758320, 505680, "kwhzweiphh");
       break;
       case "7":
         legende(sumThreePhh, linearBlue, "Stromverbrauch Drei-PHH", 7);
-        initMap(data, sumThreePhh, linearBlue, 9481050, 360450, 7);
+        initMap(data, sumThreePhh, linearBlue, 9481050, 360450, "kwhdreiphh");
       break;
       case "8":
         legende(sumFourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8);
-        initMap(data, sumFourPhh, linearBlue, 7281750, 361000, 8);
+        initMap(data, sumFourPhh, linearBlue, 7281750, 361000, "kwhvierphh");
       break;
       case "9":
         legende(sumFivePhh, linearBlue, "Stromverbrauch Fuenf-PHH", 9);
-        initMap(data, sumFivePhh, linearBlue, 4602090, 96660, 9);
+        initMap(data, sumFivePhh, linearBlue, 4602090, 96660, "kwhfünfphh");
       break; 
     }  
   }
@@ -460,8 +451,9 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
 
 
 ////////////////Balken diagramme für Detail Panel////////////////////
-  var testdata = [12837,3677,1011,552,215];
-  
+
+
+
   groupedBarChart(data, "#detail-panel3");
  
    
