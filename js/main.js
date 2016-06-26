@@ -157,7 +157,7 @@ function removeItem(array, item){
 /**
 * @param operation true = addition, false = subtraktion
 **/ 
-var temp = 0, groupEnergyArray = [];
+var groupEnergyArray = [];
 function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
  
   if (operation) {
@@ -186,7 +186,6 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
       groupEnergyHead = sum(groupEnergyArray) / i;
     }
   }
-  
 
   if (!null) {
     $("#einwohneranzahl").val(groupResidents);
@@ -203,6 +202,16 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
     $("#flache").val(0);
   }
 
+}
+
+function clearGroupedArray () {
+  groupEnergyArray.length = 0;
+  console.log('cleared?  '+ groupEnergyArray.length);
+  $("#einwohneranzahl").val(0);
+  $("#stromverbrauch").val(0);
+  $("#stromprokopf").val(0);
+  $("#hhgrose2").val(0);
+  $("#flache").val(0);
 }
 
 var groupBucket = [{}];
@@ -574,6 +583,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
       d3.select("#main-panel svg").transition().delay(10).remove();
       prev = radioIndex;
       switchLegends(radioIndex);
+      clearGroupedArray();
     }   
   });
 
