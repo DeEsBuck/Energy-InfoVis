@@ -205,8 +205,11 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
 }
 
 function clearGroupedArray () {
+  groupPhh = 0;
+  groupResidents = 0;
+  groupSize = 0;
+  groupEnergy = 0;
   groupEnergyArray.length = 0;
-  console.log('cleared?  '+ groupEnergyArray.length);
   $("#einwohneranzahl").val(0);
   $("#stromverbrauch").val(0);
   $("#stromprokopf").val(0);
