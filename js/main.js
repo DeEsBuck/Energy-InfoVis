@@ -119,7 +119,7 @@ function valuesDetails (data) {
     $("#gesamtverbrauch").val(cityEnergy);
     $("#verbrauchkopf").val(Math.floor(cityEnergyHead));
     $("#hhgroessen2").val(cityPhh);
-    $("#gesamtflache").val(citySize);
+    $("#gesamtflache").val(Math.floor(citySize));
     
   } else {
     $("#alleinwohneranzahl").val(0);
@@ -128,6 +128,96 @@ function valuesDetails (data) {
     $("#hhgroessen2").val(0);
     $("#gesamtverbrauch").val(0);
   }
+}
+
+function sum(input){  
+  if (toString.call(input) !== "[object Array]")  
+  return false;  
+  
+  var total =  0;  
+  for(var i=0;i<input.length;i++) {                    
+    if (isNaN(input[i])) {  
+      continue;  
+    }  
+    total += Number(input[i]);  
+  }
+  return total;  
+}
+
+function removeItem(array, item){
+  for(var i in array){
+    if(array[i]==item){
+      array.splice(i,1);
+      break;
+    }
+  }
+  return array;
+}
+
+/**
+* @param operation true = addition, false = subtraktion
+**/ 
+var temp = 0, groupEnergyArray = [];
+function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
+ 
+  if (operation) {
+    groupPhh += +data[index]["sumphh"];
+    groupResidents += +data[index]["einwohner"];
+    groupSize += +data[index]["stadtflaecheqkm"];
+    groupEnergy += kwhallphh;
+    console.log('count: '+i);
+    groupEnergyArray.push(kwhhead);
+    console.log(groupEnergyArray);
+    groupEnergyHead = sum(groupEnergyArray) / i;
+  }
+  else {
+    groupPhh -= +data[index]["sumphh"];
+    groupResidents -= +data[index]["einwohner"];
+    groupSize -= +data[index]["stadtflaecheqkm"];
+    groupEnergy -= kwhallphh;
+    console.log('count: '+i);
+    if (i <= 0) {
+      groupEnergyHead = 0;
+      groupEnergyArray.shift();
+    }
+    else {
+      groupEnergyArray = removeItem(groupEnergyArray, kwhhead);
+      console.log(groupEnergyArray);
+      groupEnergyHead = sum(groupEnergyArray) / i;
+    }
+  }
+  
+
+  if (!null) {
+    $("#einwohneranzahl").val(groupResidents);
+    $("#stromverbrauch").val(groupEnergy);
+    $("#stromprokopf").val(Math.floor(groupEnergyHead));
+    $("#hhgrose2").val(groupPhh);
+    $("#flache").val(Math.round(groupSize));
+    
+  } else {
+    $("#einwohneranzahl").val(0);
+    $("#stromverbrauch").val(0);
+    $("#stromprokopf").val(0);
+    $("#hhgrose2").val(0);
+    $("#flache").val(0);
+  }
+
+}
+
+var groupBucket = [{}];
+function addValue (key, id, value) {
+  groupBucket = d3.map([{key: key, id: id, value: value}],
+    function (d) {
+      return d.key;
+    });  
+  //console.log(bucketView.values());
+  return groupBucket.get(key);
+}
+
+function removeValue (id) {
+  groupBucket.remove(id);
+  return groupBucket.get(id);
 }
 
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
@@ -283,24 +373,18 @@ function picker (key, index) {
       return d.key;
     });
 
-  console.log(bigBucket.get(key));
-
-  return bigBucket.get(key);
+  var result = [bigBucket.get(key), bigBucket.get('id')];
+  //console.log(result[0],result[1]);
+  return result;
 }
 
-var tempBucket = [{}];
-function addBar (key, id, value) {
-  tempBucket = d3.map([{key: key, id: id, value: value}],
+function createTempObject (key, id, value) {
+  var tempBucket = d3.map([{key: key, id: id, value: value}],
     function (d) {
       return d.key;
     });  
   //console.log(bucketView.values());
   return tempBucket.get(key);
-}
-
-function removeBar (id) {
-  tempBucket.remove(id);
-  return tempBucket.get(id);
 }
 
 function createBar (name, panelName) {
@@ -313,6 +397,7 @@ function createBar (name, panelName) {
     .attr("height", h);*/
 
 }
+ 
 
 //TODO legende auch für mehr farben linear vorbereiten
 function legende (data, color, title, id) {
@@ -343,8 +428,8 @@ function colorId (selection, value, id, color, max, min) {
     });    
 }
 
-function polygonInteraction (selection, pointer, color, max, min, modi) {
-  var objectId = "", value = "", obj = [], index = 0;
+function polygonInteraction (selection, pointer, color, max, min, modi, data) {
+  var objectId = "", value = "", obj = [], index = 0, i = 0;
   createBar(modi, '#detail-panel');
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
@@ -358,6 +443,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi) {
       value = d3.select(this).attr("value");
       objectId = d3.select(this).attr("id");
       index = d3.select(this).attr("index");
+      var kwhhead = picker("kwhhead", index);
+      var kwhallphh = picker("kwhallphh", index);
 
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
@@ -365,21 +452,18 @@ function polygonInteraction (selection, pointer, color, max, min, modi) {
         .attr("fill-opacity", 1);
         obj = picker(modi, index);
 
-        var bar = addBar(modi, objectId, value);
-        console.log('add this: '+bar.id+' of '+obj.key+' with '+obj.value);
-
+        var bar = createTempObject(modi, objectId, value);
+        console.log('add this: '+obj[1].value+' of '+obj[0].key+' with '+obj[0].value);
+        i += 1;
+        groupedValues(i, true, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
       } 
       else if (d3.select(this).attr("checked")){
         colorId(selection, value, d3.select(this).attr("id"), color, max, min);
         d3.select(this).attr("checked", null);
-        
-        bar = removeBar(index);
-        try {
-          console.log('remove this: '+objectId+' for real '+bar.id);
-        }
-        catch (e) {
-          console.log('removed: '+objectId+', error: '+e);
-        }
+        bar = createTempObject(modi, objectId, value);
+        console.log('remove this: '+objectId+' for real '+bar.value);
+        i -= 1;
+        groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
       }
     });
     return objectId;
@@ -418,7 +502,7 @@ function initMap (data, value, color, max, min, modi) {
          return "ID: "+data[i]["number"]+", Wert: "+String(value[i]);
       });
     }
-    polygonInteraction(innerSVG, ".pointer", color, max, min, modi);
+    polygonInteraction(innerSVG, ".pointer", color, max, min, modi, data);
   });
 }
 
