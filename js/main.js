@@ -23,6 +23,7 @@ var cityEnergyHead = 0;
 var cityPhh = 0;
 var citySize = 0;
 
+var groupEnergyArray = [];
 var groupResidents = 0;
 var groupEnergy = 0;
 var groupEnergyHead = 0;
@@ -50,6 +51,31 @@ function countPhh (data) {
   countPerPhh.push(onePhh,twoPhh,threePhh,fourPhh,fivePhh);
   return countPerPhh;
 }
+
+function sum(input){  
+  if (toString.call(input) !== "[object Array]")  
+  return false;  
+  
+  var total =  0;  
+  for(var i=0;i<input.length;i++) {                    
+    if (isNaN(input[i])) {  
+      continue;  
+    }  
+    total += Number(input[i]);  
+  }
+  return total;  
+}
+
+function removeItem(array, item){
+  for(var i in array){
+    if(array[i]==item){
+      array.splice(i,1);
+      break;
+    }
+  }
+  return array;
+}
+
 
 function valuesDetails (data) {
   for (var j = 0; j < data.length; j++) {
@@ -113,13 +139,12 @@ function valuesDetails (data) {
 
   cityEnergyHead = cityEnergy / allResidents;
 
-
   if (!null) {
     $("#alleinwohneranzahl").val(allResidents);
     $("#gesamtverbrauch").val(cityEnergy);
-    $("#verbrauchkopf").val(Math.floor(cityEnergyHead));
+    $("#verbrauchkopf").val(Math.round(cityEnergyHead * 100) / 100);
     $("#hhgroessen2").val(cityPhh);
-    $("#gesamtflache").val(Math.floor(citySize));
+    $("#gesamtflache").val(Math.round(citySize * 100) / 100);
     
   } else {
     $("#alleinwohneranzahl").val(0);
@@ -130,36 +155,10 @@ function valuesDetails (data) {
   }
 }
 
-function sum(input){  
-  if (toString.call(input) !== "[object Array]")  
-  return false;  
-  
-  var total =  0;  
-  for(var i=0;i<input.length;i++) {                    
-    if (isNaN(input[i])) {  
-      continue;  
-    }  
-    total += Number(input[i]);  
-  }
-  return total;  
-}
-
-function removeItem(array, item){
-  for(var i in array){
-    if(array[i]==item){
-      array.splice(i,1);
-      break;
-    }
-  }
-  return array;
-}
-
 /**
 * @param operation true = addition, false = subtraktion
 **/ 
-var groupEnergyArray = [];
 function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
- 
   if (operation) {
     groupPhh += +data[index]["sumphh"];
     groupResidents += +data[index]["einwohner"];
@@ -190,10 +189,9 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
   if (!null) {
     $("#einwohneranzahl").val(groupResidents);
     $("#stromverbrauch").val(groupEnergy);
-    $("#stromprokopf").val(Math.floor(groupEnergyHead));
+    $("#stromprokopf").val(Math.round(groupEnergyHead * 100) / 100);
     $("#hhgrose2").val(groupPhh);
-    $("#flache").val(Math.round(groupSize));
-    
+    $("#flache").val(Math.round(groupSize * 100) / 100);
   } else {
     $("#einwohneranzahl").val(0);
     $("#stromverbrauch").val(0);
@@ -201,7 +199,6 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
     $("#hhgrose2").val(0);
     $("#flache").val(0);
   }
-
 }
 
 function clearGroupedArray () {
@@ -217,20 +214,6 @@ function clearGroupedArray () {
   $("#flache").val(0);
 }
 
-var groupBucket = [{}];
-function addValue (key, id, value) {
-  groupBucket = d3.map([{key: key, id: id, value: value}],
-    function (d) {
-      return d.key;
-    });  
-  //console.log(bucketView.values());
-  return groupBucket.get(key);
-}
-
-function removeValue (id) {
-  groupBucket.remove(id);
-  return groupBucket.get(id);
-}
 
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
 
@@ -386,7 +369,7 @@ function picker (key, index) {
     });
 
   var result = [bigBucket.get(key), bigBucket.get('id')];
-  //console.log(result[0],result[1]);
+  //console.log(index);
   return result;
 }
 
