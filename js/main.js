@@ -57,11 +57,11 @@ function sum(input){
   return false;  
   
   var total =  0;  
-  for(var i=0;i<input.length;i++) {                    
+  for(var i = 0 ; i < input.length ; i++) {                    
     if (isNaN(input[i])) {  
       continue;  
     }  
-    total += Number(input[i]);  
+    total += +input[i];  
   }
   return total;  
 }
@@ -97,12 +97,12 @@ function valuesDetails (data) {
     fourPhh.push(+data[j]["vierphh"]);
     fivePhh.push(+data[j]["funfphh"]); 
 
-    energyHeadSumPhh.push(Math.floor((
+    energyHeadSumPhh.push(Math.round(((
       onePhh[j]*energyheadPhh[0]+
       twoPhh[j]*2*energyheadPhh[1]+
       threePhh[j]*3*energyheadPhh[2]+
       fourPhh[j]*4*energyheadPhh[3]+
-      fivePhh[j]*5*energyheadPhh[4])/resident[j]));
+      fivePhh[j]*5*energyheadPhh[4])/resident[j]) * 100) / 100);
 
     energySumPhh.push(
       onePhh[j]*energyheadPhh[0]+
@@ -132,6 +132,7 @@ function valuesDetails (data) {
     
   }
 
+  // TODO Verbrauch pro Kopf (kWh) Rechnungsfehler, vgl cityEnergyHead mit groupEnergyHead
   for (var k = 0; k < countPhh(data).length; k++) {
     energyheadPhh[k] = energyPhh[k]/(k+1);
     cityEnergy += countPhh(data)[k]*[k+1]*energyheadPhh[k]; 
@@ -164,9 +165,9 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
     groupResidents += +data[index]["einwohner"];
     groupSize += +data[index]["stadtflaecheqkm"];
     groupEnergy += kwhallphh;
-    console.log('count: '+i);
+    //console.log('count: '+i);
     groupEnergyArray.push(kwhhead);
-    console.log(groupEnergyArray);
+    //console.log(groupEnergyArray);
     groupEnergyHead = sum(groupEnergyArray) / i;
   }
   else {
@@ -174,14 +175,14 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
     groupResidents -= +data[index]["einwohner"];
     groupSize -= +data[index]["stadtflaecheqkm"];
     groupEnergy -= kwhallphh;
-    console.log('count: '+i);
+    //console.log('count: '+i);
     if (i <= 0) {
       groupEnergyHead = 0;
       groupEnergyArray.shift();
     }
     else {
       groupEnergyArray = removeItem(groupEnergyArray, kwhhead);
-      console.log(groupEnergyArray);
+      //console.log(groupEnergyArray);
       groupEnergyHead = sum(groupEnergyArray) / i;
     }
   }
@@ -378,18 +379,16 @@ function createTempObject (key, id, value) {
     function (d) {
       return d.key;
     });  
-  //console.log(bucketView.values());
+  console.log(tempBucket.get(key));
   return tempBucket.get(key);
 }
 
-function createBar (name, panelName) {
-  var h = 260, w = $(panelName).innerWidth;
+function createBar (name, panelName, data) {
+  var h = 260, w = 760;
 
   console.log('create barChart: '+name);
-  /*var svg = d3.select(panelName)
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);*/
+  
+
 
 }
  
@@ -425,7 +424,9 @@ function colorId (selection, value, id, color, max, min) {
 
 function polygonInteraction (selection, pointer, color, max, min, modi, data) {
   var objectId = "", value = "", obj = [], index = 0, i = 0;
-  createBar(modi, '#detail-panel');
+  // init barChart
+  createBar(modi, '#detail-panel', createTempObject(modi, "101", 27515));
+  
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
       d3.select(this).attr("fill-opacity", .7);
@@ -440,14 +441,13 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
       index = d3.select(this).attr("index");
       var kwhhead = picker("kwhhead", index);
       var kwhallphh = picker("kwhallphh", index);
+      obj = picker(modi, index);
 
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
         d3.select(this).attr("fill", color[1].darker(1.1))
         .attr("fill-opacity", 1);
-        obj = picker(modi, index);
-
-        var bar = createTempObject(modi, objectId, value);
+        
         console.log('add this: '+obj[1].value+' of '+obj[0].key+' with '+obj[0].value);
         i += 1;
         groupedValues(i, true, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
@@ -455,8 +455,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
       else if (d3.select(this).attr("checked")){
         colorId(selection, value, d3.select(this).attr("id"), color, max, min);
         d3.select(this).attr("checked", null);
-        bar = createTempObject(modi, objectId, value);
-        console.log('remove this: '+objectId+' for real '+bar.value);
+
         i -= 1;
         groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
       }
