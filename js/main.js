@@ -1,7 +1,8 @@
 
 // Kategorien Werte für Map und legende
 var sumPhh = []; //Alle haushalte je statdteil
-var dataname = []; //Stadtteil Namen
+var dataname = []; //Stadtteil Nummer
+var stadtteilname = []; 
 var diversity = []; //einwohnerqkm
 var sumOnePhh = [], sumTwoPhh = [], sumThreePhh = [], sumFourPhh = [], sumFivePhh = []; // Gesamt Stromverbrauch pro Haushalt
 var onePhh = [], twoPhh = [], threePhh = [], fourPhh = [], fivePhh = []; // Anzahl der pHH
@@ -85,6 +86,7 @@ function valuesDetails (data) {
 
     sumPhh.push(+data[j]["sumphh"]);
     dataname.push(data[j]["number"]);
+    stadtteilname.push(data[j]["stadtteil"]);
     diversity.push(+data[j]["einwohnerqkm"]);
     resident.push(+data[j]["einwohner"]);
 
@@ -265,6 +267,7 @@ function pickerArray (key, index) {
   // Bucket für pro Haushaltsgrößen panel
   var bigBucket = [
     {"id": dataname, // id == index referenz
+    "stadtteil": stadtteilname,
     "einwohner": resident,
     "wohndichte": diversity,
     "kwhhead": energyHeadSumPhh,
@@ -293,7 +296,7 @@ function pickerArray (key, index) {
     }];
 
   //bigBucket[0][key][index]
-  return bigBucket[0];
+  return bigBucket;
 }
 
 function createTempObject (key, id, value) {
@@ -448,17 +451,33 @@ function groupedBarChart (data, panelName) {
 
 function createBar (modi, panelName, array, index) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 760 - margin.left - margin.right,
+    width = 1280 - margin.left - margin.right,
     height = 260 - margin.top - margin.bottom;
   
   console.log('create barChart: '+modi);
   
-  var data = array[modi];
+  var data = array[0][modi];
   console.log(data);
 
+  var name = d3.keys(array[0])
+  .filter(function(key) { 
+    return key == "stadtteil";
+       // bug
+  });
+  name.push(modi);
+  name = d3.merge([name], array);
+  console.log(name);
+
+  array.forEach(function (d) {
+    d.cityName = name.map(function (name) {
+      return {name: name, value: d[name][index]};
+    });
+    console.log(d.cityName);
+  });
+
   var xScale = d3.scale.ordinal()
-    .domain(d3.range(data.length))
-    .rangeBands([0, width], 0.2);
+    .domain(d3.range(data.length))//array.map(function(d) { return d.stadtteil; })
+    .rangeBands([0, width], 0.4);
 
   var yScale = d3.scale.linear()
     .domain([0, d3.max(data, function(d) { return d; })])
@@ -529,15 +548,13 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
       var kwhhead = picker("kwhhead", index);
       var kwhallphh = picker("kwhallphh", index);
       obj = picker(modi, index); // Test
-      var array = pickerArray(modi, index);
-      //console.log(array);
-      createBar(modi, "#detail-panel", array, index);
 
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
         d3.select(this).attr("fill", color[1].darker(1.1))
         .attr("fill-opacity", 1);
-        
+        createBar(modi, "#detail-panel", pickerArray(modi, index), index, data);
+
         console.log('add this: '+obj[1].value+' of '+obj[0].key+' with '+obj[0].value); // test
         i += 1;
         groupedValues(i, true, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
