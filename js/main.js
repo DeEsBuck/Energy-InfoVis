@@ -451,7 +451,7 @@ function groupedBarChart (data, panelName) {
 
 function createBar (modi, panelName, array, index) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 1280 - margin.left - margin.right,
+    width = 78 - margin.left - margin.right,
     height = 260 - margin.top - margin.bottom;
   
   console.log('create barChart: '+modi);
@@ -462,7 +462,6 @@ function createBar (modi, panelName, array, index) {
   var name = d3.keys(array[0])
   .filter(function(key) { 
     return key == "stadtteil";
-       // bug
   });
   name.push(modi);
   name = d3.merge([name], array);
@@ -476,19 +475,30 @@ function createBar (modi, panelName, array, index) {
   });
 
   var xScale = d3.scale.ordinal()
-    .domain(d3.range(data.length))//array.map(function(d) { return d.stadtteil; })
-    .rangeBands([0, width], 0.4);
+    .domain(d3.range(data.length))
+    .rangeBands([0, width], 0);
+
+   var x1Scale = d3.scale.ordinal()
+    .domain(array.map(function(d) { 
+      console.log(d.stadtteil);
+      return d.stadtteil[index]; 
+    }))
+    .rangeBands([0, width], 0);
 
   var yScale = d3.scale.linear()
     .domain([0, d3.max(data, function(d) { return d; })])
     .range([0, height]);
- 
+
   var y = d3.scale.linear()
     .domain([0, d3.max(data, function(d) { return d; })])
     .range([height, 0]);
 
-  var xAxis = d3.svg.axis()
+var xAxis = d3.svg.axis()
     .scale(xScale)
+    .orient("bottom");
+
+  var x1Axis = d3.svg.axis()
+    .scale(x1Scale)
     .orient("bottom");
 
   var yAxis = d3.svg.axis()
@@ -497,6 +507,7 @@ function createBar (modi, panelName, array, index) {
     .tickFormat(d3.format(".2s"));
 
   var svg = d3.select(panelName).append("svg")
+    .attr("barid", index)
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -506,16 +517,21 @@ function createBar (modi, panelName, array, index) {
     .data(data, function (d) {return d})
     .enter()
     .append("rect")
-    .attr("x", function(d, i) {return xScale(i)})
+    .attr("x", function(d, i) {return 0})
     .attr("y", function(d) {return height - yScale(d);})
-    .attr("width",  xScale.rangeBand())
+    .attr("width",  x1Scale.rangeBand())
     .attr("height", function(d) {return yScale(d);})
-    .attr("fill", linearBlue[1]);
+    .attr("fill", linearBlue[1])
+    .attr("id", function(d, i) {return i})
+    .attr("display", "none")
+    .attr("display", function(d, i) {
+      return i == index ? "block":"none" ;
+    });
 
   svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
+    .call(x1Axis);
 
   svg.append("g")
     .attr("class", "y axis")
@@ -527,6 +543,11 @@ function createBar (modi, panelName, array, index) {
     .style("text-anchor", "end")
     .text(modi);
 
+}
+
+function removeBar (panelName, id) {
+  //d3.selectAll(panelName + " svg [id='"+id+"']").remove();
+  d3.selectAll(panelName + " [barid='"+id+"']").remove();
 }
  
 
@@ -562,6 +583,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
       else if (d3.select(this).attr("checked")){
         colorId(selection, value, d3.select(this).attr("id"), color, max, min);
         d3.select(this).attr("checked", null);
+        removeBar("#detail-panel", index);
 
         i -= 1;
         groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
