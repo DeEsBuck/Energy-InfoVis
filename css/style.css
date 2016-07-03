@@ -166,6 +166,10 @@ h3, h4 {
 	background-color: #eee;
 }
 
+#detail-panel .reset {
+	float: right;
+}
+
 #myTabs {
 	margin-bottom: 10px;
 }
