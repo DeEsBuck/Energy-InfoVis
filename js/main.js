@@ -237,12 +237,12 @@ function picker (key, index) {
     {key: "zweiphh", value: twoPhh[index]}, 
     {key: "dreiphh", value: threePhh[index]}, 
     {key: "vierphh", value: fourPhh[index]},
-    {key: "fünfphh", value: fivePhh[index]}, 
+    {key: "fuenfphh", value: fivePhh[index]}, 
     {key: "residenteinphh", value: _onePhh[index]}, // Einwohneranzahl pro HHg
     {key: "residentzweiphh", value: _twoPhh[index]},
     {key: "residentdreiphh", value: _threePhh[index]}, 
     {key: "residentvierphh", value: _fourPhh[index]},
-    {key: "residentfünfphh", value: _fivePhh[index]},
+    {key: "residentfuenfphh", value: _fivePhh[index]},
     {key: "kwheinphh", value: sumOnePhh[index]}, // Summe Stromverbrauch pro HHg
     {key: "kwhzweiphh", value: sumTwoPhh[index]},
     {key: "kwhdreiphh", value: sumThreePhh[index]}, 
@@ -252,7 +252,7 @@ function picker (key, index) {
     {key: "avgkwhheadzweiphh", value: avgTwoPhh[index]},
     {key: "avgkwhheaddreiphh", value: avgThreePhh[index]}, 
     {key: "avgkwhheadvierphh", value: avgFourPhh[index]},
-    {key: "avgkwhheadfünfphh", value: avgFivePhh[index]}
+    {key: "avgkwhheadfuenfphh", value: avgFivePhh[index]}
     ], 
     function (d) {
       return d.key;
@@ -277,12 +277,12 @@ function pickerArray (key, index) {
     "zweiphh": twoPhh, 
     "dreiphh": threePhh, 
     "vierphh": fourPhh,
-    "fünfphh": fivePhh, 
+    "fuenfphh": fivePhh, 
     "residenteinphh": _onePhh, // Einwohneranzahl pro HHg
     "residentzweiphh": _twoPhh,
     "residentdreiphh": _threePhh, 
     "residentvierphh": _fourPhh,
-    "residentfünfphh": _fivePhh,
+    "residentfuenfphh": _fivePhh,
     "kwheinphh": sumOnePhh, // Summe Stromverbrauch pro HHg
     "kwhzweiphh": sumTwoPhh,
     "kwhdreiphh": sumThreePhh, 
@@ -292,7 +292,7 @@ function pickerArray (key, index) {
     "avgkwhheadzweiphh": avgTwoPhh,
     "avgkwhheaddreiphh": avgThreePhh, 
     "avgkwhheadvierphh": avgFourPhh,
-    "avgkwhheadfünfphh": avgFivePhh
+    "avgkwhheadfuenfphh": avgFivePhh
     }];
 
   //bigBucket[0][key][index]
@@ -412,10 +412,10 @@ function groupedBarChart (data, panelName) {
       .style("text-anchor", "end")
       .text("Stromverbrauch in kWh");
 
-  var phh = svg.selectAll(".phh")
+  var phh = svg.selectAll(".part")
       .data(data)
     .enter().append("g")
-      .attr("class", "phh")
+      .attr("class", "part")
       .attr("transform", function(d) { return "translate(" + x0(d.stadtteil) + ",0)"; });
 
   phh.selectAll("rect")
@@ -448,46 +448,95 @@ function groupedBarChart (data, panelName) {
       .text(function(d) { return d; });
 }
 
-function createPhhBar (modi, panelName, array, index, color) {
+function createPhhBar (modi, panelName, array, index) {
    var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 1280 - margin.left - margin.right,
+    width = 760 - margin.left - margin.right,
     height = 260 - margin.top - margin.bottom;
-  
-  console.log('create barChart: '+modi);
-  
-  var data = array[0][modi];
+
+  var color = d3.scale.ordinal()
+    .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
+    
+  var data = array[0];
   console.log(data);
 
-  var name = d3.keys(array[0])
-  .filter(function(key) { 
-    return key == "stadtteil";
-       // bug
-  });
-  name.push(modi);
-  name = d3.merge([name], array);
-  console.log(name);
+  var phhName = []
+  if (modi == "allphh") {
+    phhName.push("einphh");
+    phhName.push("zweiphh");
+    phhName.push("dreiphh");
+    phhName.push("vierphh");
+    phhName.push("fuenfphh");
+  }
+  else if (modi == "einwohner") {
+    phhName.push("residenteinphh");
+    phhName.push("residentzweiphh");
+    phhName.push("residentdreiphh");
+    phhName.push("residentvierphh");
+    phhName.push("residentfuenfphh");
+  }
+  else if (modi == "kwhhead") {
+    phhName.push("avgkwhheadeinphh");
+    phhName.push("avgkwhheadzweiphh");
+    phhName.push("avgkwhheaddreiphh");
+    phhName.push("avgkwhheadvierphh");
+    phhName.push("avgkwhheadfuenfphh");
+  }
+  else if (modi == "kwhallphh") {
+    phhName.push("kwheinphh");
+    phhName.push("kwhzweiphh");
+    phhName.push("kwhdreiphh");
+    phhName.push("kwhvierphh");
+    phhName.push("kwhfuenfphh");
+  }
+  else if (modi == "wohndichte") {
+    console.log(TODO);
+  }
+  else if (modi == "kwheinphh") {
+    phhName.push("kwheinphh");
+  }
+  else if (modi == "kwhzweiphh") {
+    phhName.push("kwhzweiphh");
+  }
+  else if (modi == "kwhdreiphh") {
+    phhName.push("kwhdreiphh");
+  }
+  else if (modi == "kwhvierphh") {
+    phhName.push("kwhvierphh");
+  }
+  else if (modi == "kwhfuenfphh") {
+    phhName.push("kwhfuenfphh");
+  }
+  
+  //phhName = d3.merge([phhName], array[modi]);
+  console.log(phhName);
 
-  array.forEach(function (d) {
-    d.cityName = name.map(function (name) {
+  array.forEach(function (d,i) {
+    d.phhValue = phhName.map(function (name) {
       return {name: name, value: d[name][index]};
     });
-    console.log(d.cityName);
+    console.log(d.phhValue);
   });
 
+  // Bars
   var xScale = d3.scale.ordinal()
-    .domain(d3.range(data.length))
-    .rangeBands([0, width], 0.4);
+    .domain(array.map(function(d) { return d.length; }))
+    .rangeBands([0, width], 0);
 
-  var yScale = d3.scale.linear()
-    .domain([0, d3.max(data, function(d) { return d; })])
-    .range([0, height]);
- 
+  // skala
+  var x = d3.scale.ordinal()
+    .domain(phhName)
+    .rangeBands([0, xScale.rangeBand()]);
+
   var y = d3.scale.linear()
-    .domain([0, d3.max(data, function(d) { return d; })])
-    .range([height, 0]);
+   .domain([0, d3.max(array, function(d) { 
+    return d3.max(d.phhValue, function(d) { 
+      return d.value; 
+    }); 
+  })])
+  .range([height, 0]);
 
   var xAxis = d3.svg.axis()
-    .scale(xScale)
+    .scale(x)
     .orient("bottom");
 
   var yAxis = d3.svg.axis()
@@ -496,22 +545,30 @@ function createPhhBar (modi, panelName, array, index, color) {
     .tickFormat(d3.format(".2s"));
 
   var svg = d3.select(panelName).append("svg")
+    .attr("barid", index+"-"+modi)
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  svg.selectAll("rect")
-    .data(data)
+    //Bar
+ var phh = svg.selectAll(".phh")
+      .data(array)
+    .enter().append("g")
+      .attr("class", "phh")
+      .attr("transform", function(d, i) { return "translate(" + xScale(d.modi) + ",0)"; });
+
+// Skala
+  phh.selectAll("rect")
+    .data(function(d) { return d.phhValue; })
     .enter()
     .append("rect")
-    .attr("x", function(d, i) {return xScale(i)})
-    .attr("y", function(d) {return height - yScale(d);})
-    .attr("width",  xScale.rangeBand())
-    .attr("height", function(d) {return yScale(d);})
-    .attr("fill", linearBlue[1])
-    .attr("id", function(d, i) {return i})
-    .attr("display", "none");
+    .attr("x", function(d) {return x(d.name)})
+    .attr("y", function(d) {return y(d.value)})
+    .attr("width",  x.rangeBand())
+    .attr("height", function(d) {return height - y(d.value)})
+    .attr("fill",function(d) { return color(d.name)})
+    .attr("id", function(d, i) {return i});
 
   svg.append("g")
     .attr("class", "x axis")
@@ -522,11 +579,12 @@ function createPhhBar (modi, panelName, array, index, color) {
     .attr("class", "y axis")
     .call(yAxis)
   .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text(modi);
+    //.attr("transform", "rotate(-90)")
+    .attr("x", 0)
+    .attr("y", -10)
+    //.attr("dy", ".71em")
+    .style("text-anchor", "start")
+    .text("Modus: "+modi+": "+data["stadtteil"][index]);
 
     return svg;
 }
@@ -627,7 +685,8 @@ function removeBar (panelName, id, modi) {
 
 function polygonInteraction (selection, pointer, color, max, min, modi, data) {
   var objectId = "", value = "", obj = [], index = 0, i = 0;
- var svgPhhBarChart = createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index, color[1]);
+  // init chart
+  var svgPhhBarChart = createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
  
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
@@ -644,8 +703,6 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
       var kwhhead = picker("kwhhead", index);
       var kwhallphh = picker("kwhallphh", index);
 
-      obj = picker(modi, index); // Test
-
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
         d3.select(this).attr("fill", linearGray[1])
@@ -653,11 +710,9 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
         createBar(modi, "#detail-panel", pickerArray(modi, index), index, color[1]);
         
         //test 
-       svgPhhBarChart.selectAll("rect").attr("display", function(d, i) {
-          return i == index ? "block":"none" ;
-        });
+        removeBarChart("#detail-panel2", index, modi);
+        createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
 
-        console.log('add this: '+obj[1].value+' of '+obj[0].key+' with '+obj[0].value); // test
         i += 1;
         groupedValues(i, true, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
       } 
@@ -666,8 +721,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
         d3.select(this).attr("checked", null);
 
         removeBarChart("#detail-panel", index, modi);
-        removeBar("#detail-panel2", index, modi);
-        
+        removeBarChart("#detail-panel2", index, modi);
 
         i -= 1;
         groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
@@ -712,6 +766,7 @@ function initMap (data, value, color, max, min, modi) {
     
     $(".reset").on("click", function () {
       removeAllBarChart("#detail-panel");
+      removeAllBarChart("#detail-panel2");
       clearGroupedArray();
       for (var i = 0; i < data.length; i++) {
         colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
