@@ -448,19 +448,127 @@ function groupedBarChart (data, panelName) {
       .text(function(d) { return d; });
 }
 
-function createPhhBar (modi, panelName, array, index) {
-   var margin = {top: 20, right: 20, bottom: 30, left: 40},
+var phhName = [], phhCityName = [];
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 760 - margin.left - margin.right,
     height = 260 - margin.top - margin.bottom;
 
+function createkwhPhhBar(modi, panelName, array, index) {
+  var color = d3.scale.ordinal()
+    .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
+
+ if (modi == "kwheinphh") {
+    phhCityName = [];
+    phhCityName.push(array[0]["stadtteil"][index]);
+  }
+  else if (modi == "kwhzweiphh") {
+    phhCityName = [];
+    phhCityName.push(array[0]["stadtteil"][index]);
+  }
+  else if (modi == "kwhdreiphh") {
+    phhCityName = [];
+    phhCityName.push(array[0]["stadtteil"][index]);
+  }
+  else if (modi == "kwhvierphh") {
+    phhCityName = [];
+    phhCityName.push(array[0]["stadtteil"][index]);
+  }
+  else if (modi == "kwhfuenfphh") {
+    phhCityName = [];
+    phhCityName.push(array[0]["stadtteil"][index]);
+  }
+
+  
+console.log(phhCityName);
+  array.forEach(function (d) {
+    d.phhCityValue = phhCityName.map(function (name) {
+      return {name: name, value: +d[modi][index] };
+    });
+    console.log(d.phhCityValue);
+  });
+
+  
+
+ // Bars
+  var xScale = d3.scale.ordinal()
+    .domain(array.map(function(d) { return d.length; }))
+    .rangeBands([0, width], 0);
+
+  // skala
+  var x = d3.scale.ordinal()
+    .domain(phhCityName)
+    .rangeBands([0, xScale.rangeBand()]);
+
+  var y = d3.scale.linear()
+   .domain([0, d3.max(array, function(d) { 
+    return d3.max(d.phhCityValue, function(d) { 
+      return d.value; 
+    }); 
+  })])
+  .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .tickFormat(d3.format(".2s"));
+
+  var svg = d3.select(panelName).append("svg")
+    .attr("barid", index+"-"+modi)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var bar = svg.selectAll(".bar")
+    .data(array)
+    .enter()
+    .append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d, i) { return "translate(" + xScale(d[index]) + ",0)"; });
+
+// Skala
+  var rect = bar.selectAll("rect")
+    .data(function(d) { return d.phhCityValue; })
+    .enter()
+    .append("rect")
+    .attr("x", function(d) {return x(d.name)})
+    .attr("y", function(d) {return y(d.value)})
+    .attr("width",  x.rangeBand())
+    .attr("height", function(d) {return height - y(d.value)})
+    .attr("fill",function(d) { return color(d.name)});  
+
+  svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+    .append("text")
+    .attr("x", 0)
+    .attr("y", -10)
+    .attr("dy", ".71em")
+    .style("text-anchor", "start")
+    .text("Modus: "+modi);
+
+    return rect;
+
+}
+
+function createPhhBar (modi, panelName, array, index) {
   var color = d3.scale.ordinal()
     .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
     
   var data = array[0];
   console.log(data);
-
-  var phhName = []
+  
   if (modi == "allphh") {
+    phhName = [];
     phhName.push("einphh");
     phhName.push("zweiphh");
     phhName.push("dreiphh");
@@ -468,6 +576,7 @@ function createPhhBar (modi, panelName, array, index) {
     phhName.push("fuenfphh");
   }
   else if (modi == "einwohner") {
+    phhName = [];
     phhName.push("residenteinphh");
     phhName.push("residentzweiphh");
     phhName.push("residentdreiphh");
@@ -475,6 +584,7 @@ function createPhhBar (modi, panelName, array, index) {
     phhName.push("residentfuenfphh");
   }
   else if (modi == "kwhhead") {
+    phhName = [];
     phhName.push("avgkwhheadeinphh");
     phhName.push("avgkwhheadzweiphh");
     phhName.push("avgkwhheaddreiphh");
@@ -482,6 +592,7 @@ function createPhhBar (modi, panelName, array, index) {
     phhName.push("avgkwhheadfuenfphh");
   }
   else if (modi == "kwhallphh") {
+    phhName = [];
     phhName.push("kwheinphh");
     phhName.push("kwhzweiphh");
     phhName.push("kwhdreiphh");
@@ -489,30 +600,17 @@ function createPhhBar (modi, panelName, array, index) {
     phhName.push("kwhfuenfphh");
   }
   else if (modi == "wohndichte") {
-    console.log(TODO);
+    phhName = [];
+    console.log("TODO");
   }
-  else if (modi == "kwheinphh") {
-    phhName.push("kwheinphh");
-  }
-  else if (modi == "kwhzweiphh") {
-    phhName.push("kwhzweiphh");
-  }
-  else if (modi == "kwhdreiphh") {
-    phhName.push("kwhdreiphh");
-  }
-  else if (modi == "kwhvierphh") {
-    phhName.push("kwhvierphh");
-  }
-  else if (modi == "kwhfuenfphh") {
-    phhName.push("kwhfuenfphh");
-  }
-  
+  else { console.log("Notallowed")}
+
   //phhName = d3.merge([phhName], array[modi]);
   console.log(phhName);
 
-  array.forEach(function (d,i) {
+  array.forEach(function (d) {
     d.phhValue = phhName.map(function (name) {
-      return {name: name, value: d[name][index]};
+      return {name: name, value: +d[name][index]};
     });
     console.log(d.phhValue);
   });
@@ -553,13 +651,14 @@ function createPhhBar (modi, panelName, array, index) {
 
     //Bar
  var phh = svg.selectAll(".phh")
-      .data(array)
-    .enter().append("g")
-      .attr("class", "phh")
-      .attr("transform", function(d, i) { return "translate(" + xScale(d.modi) + ",0)"; });
+    .data(array)
+    .enter()
+    .append("g")
+    .attr("class", "phh")
+    .attr("transform", function(d, i) { return "translate(" + xScale(d.modi) + ",0)"; });
 
 // Skala
-  phh.selectAll("rect")
+  var rect = phh.selectAll("rect")
     .data(function(d) { return d.phhValue; })
     .enter()
     .append("rect")
@@ -567,8 +666,7 @@ function createPhhBar (modi, panelName, array, index) {
     .attr("y", function(d) {return y(d.value)})
     .attr("width",  x.rangeBand())
     .attr("height", function(d) {return height - y(d.value)})
-    .attr("fill",function(d) { return color(d.name)})
-    .attr("id", function(d, i) {return i});
+    .attr("fill",function(d) { return color(d.name)});
 
   svg.append("g")
     .attr("class", "x axis")
@@ -578,7 +676,7 @@ function createPhhBar (modi, panelName, array, index) {
   svg.append("g")
     .attr("class", "y axis")
     .call(yAxis)
-  .append("text")
+    .append("text")
     //.attr("transform", "rotate(-90)")
     .attr("x", 0)
     .attr("y", -10)
@@ -586,7 +684,7 @@ function createPhhBar (modi, panelName, array, index) {
     .style("text-anchor", "start")
     .text("Modus: "+modi+": "+data["stadtteil"][index]);
 
-    return svg;
+    return phh;
 }
 
 function createBar (modi, panelName, array, index, color) {
@@ -685,8 +783,7 @@ function removeBar (panelName, id, modi) {
 
 function polygonInteraction (selection, pointer, color, max, min, modi, data) {
   var objectId = "", value = "", obj = [], index = 0, i = 0;
-  // init chart
-  var svgPhhBarChart = createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
+  
  
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
@@ -711,8 +808,56 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
         
         //test 
         removeBarChart("#detail-panel2", index, modi);
-        createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
+        //createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
 
+        var xScale = d3.scale.ordinal()
+        .domain(pickerArray(modi, index).map(function(d) { return d.length; }))
+        .rangeBands([0, width], 0);
+
+        if ((modi == "allphh") 
+          || (modi == "einwohner") 
+          || (modi == "kwhallphh")
+          || (modi == "kwhhead") 
+          || (modi == "wohndichte")) {
+          pickerArray(modi, index).forEach(function (d) {
+            d.phhValue = phhName.map(function (name) {
+              return {name: name, value: d[name][index]};
+            });
+          });
+          var x = d3.scale.ordinal()
+          .domain(phhName)
+          .rangeBands([0, xScale.rangeBand()]);
+          var svgPhhBarChart = createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
+        }
+        else if ((modi == "kwheinphh") 
+          || (modi == "kwhzweiphh") 
+          || (modi == "kwhdreiphh")
+          || (modi == "kwhvierphh") 
+          || (modi == "kwhfuenfphh")) {
+          pickerArray(modi, index).forEach(function (d) {
+            d.phhCityValue = phhCityName.map(function (name) {
+              return {name: name, value: +d[modi][index] };
+            });
+          });
+          var x = d3.scale.ordinal()
+          .domain(phhCityName)
+          .rangeBands([0, xScale.rangeBand()]);
+          if (svgKwhPhhBar == undefined) {
+            var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
+          } else {
+            svgKwhPhhBar.data(function(d) { return d.phhCityValue; })
+            .enter()
+            .append("rect")
+            .attr("x", function(d) {return x(d.name)})
+            .attr("y", function(d) {return y(d.value)})
+            .attr("width",  x.rangeBand())
+            .attr("height", function(d) {return height - y(d.value)})
+            .attr("fill",function(d) { return color(d.name)})
+            .exit().remove();
+          }
+          
+        }
+        
         i += 1;
         groupedValues(i, true, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
       } 
