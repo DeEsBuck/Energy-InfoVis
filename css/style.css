@@ -229,12 +229,8 @@ div.bar {
     shape-rendering: crispEdges;
 }
 
-.x .axis line {
-	stroke: #fff;
-	stroke-opacity: .8;
-}
-
-.axis text {
+.axis text,
+text {
     font-family: sans-serif;
     font-size: 9px;
 }
