@@ -426,7 +426,9 @@ function groupedBarChart (data, panelName) {
       .attr("x", function(d) { return x1(d.name); })
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return color(d.name); }); 
+      .style("fill", function(d) { return color(d.name); })
+      .append("title")
+      .text(function(d) {return d.value});   
 
   var legend = svg.selectAll(".legend")
       .data(phhName.slice().reverse())
@@ -516,7 +518,9 @@ function createPhhBar (modi, panelName, array, index) {
     .attr("y", function(d) {return y(d.value)})
     .attr("width",  x.rangeBand())
     .attr("height", function(d) {return height - y(d.value)})
-    .attr("fill",function(d) { return color(d.name)});
+    .attr("fill",function(d) { return color(d.name)})
+    .append("title")
+    .text(function(d) {return d.value});  
 
   svg.append("g")
     .attr("class", "x axis")
@@ -595,7 +599,9 @@ var xAxis = d3.svg.axis()
     .attr("id", function(d, i) {return i})
     .attr("display", function() {
       return index != d3.select(this).attr("id") ? d3.select(this).remove() : "block";
-    });
+    })
+    .append("title")
+    .text(array[0][modi][index]);  
 
   svg.append("g")
     .attr("class", "x axis")
@@ -860,11 +866,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
         d3.select(this).attr("checked", true);
         d3.select(this).attr("fill", pink)
         .attr("fill-opacity", 1);
-        createBar(modi, "#detail-panel", pickerArray(modi, index), index, color[1]);
-
-        var xScale = d3.scale.ordinal()
-        .domain(array.map(function(d) { return d.length; }))
-        .rangeBands([0, width], 0);
+        createBar(modi, "#detail-panel", pickerArray(), index, color[1]);
 
         if ((modi == "allphh") 
           || (modi == "einwohner") 
@@ -879,6 +881,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("dreiphh");
             phhName.push("vierphh");
             phhName.push("fuenfphh");
+            createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
           }
           else if (modi == "einwohner") {
             phhName = [];
@@ -887,6 +890,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("residentdreiphh");
             phhName.push("residentvierphh");
             phhName.push("residentfuenfphh");
+            createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
           }
           else if (modi == "kwhhead") {
             phhName = [];
@@ -895,6 +899,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("avgkwhheaddreiphh");
             phhName.push("avgkwhheadvierphh");
             phhName.push("avgkwhheadfuenfphh");
+            removeAllBarChart("#detail-panel2", index, modi);
+            createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
           }
           else if (modi == "kwhallphh") {
             phhName = [];
@@ -903,33 +909,13 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("kwhdreiphh");
             phhName.push("kwhvierphh");
             phhName.push("kwhfuenfphh");
+            createPhhBar(modi, "#detail-panel2", pickerArray(), index);
           }
           else if (modi == "wohndichte") {
-            phhName = [];
-            console.log("TODO");
+            removeBarChart("#detail-panel2", index, modi);
+            drawKwhBar(array, index, modi);
           }
           else { console.log("Notallowed")}
-
-          array.forEach(function (d) {
-            d.phhValue = phhName.map(function (name) {
-              return {name: name, value: d[name][index]};
-            });
-          });
-          var x = d3.scale.ordinal()
-          .domain(phhName)
-          .rangeBands([0, xScale.rangeBand()]);
-          if (toString.call(svgPhhBarChart) !== "[object Array]") {
-            var svgPhhBarChart = createPhhBar(modi, "#detail-panel2", pickerArray(modi, index), index);
-          }
-          phhName.push(modi);
-          svgPhhBarChart.data(array)
-          .enter()
-          .append("rect")
-          .attr("x", function(d) {return x(d.name)})
-          .attr("y", function(d) {return y(d.value)})
-          .attr("width",  x.rangeBand())
-          .attr("height", function(d) {return height - y(d.value)})
-          .attr("fill",function(d) { return color(d.name)});
         }
         else if ((modi == "kwheinphh") 
           || (modi == "kwhzweiphh") 
@@ -972,13 +958,12 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           || (modi == "kwhzweiphh") 
           || (modi == "kwhdreiphh")
           || (modi == "kwhvierphh") 
-          || (modi == "kwhfuenfphh")) {
+          || (modi == "kwhfuenfphh")
+          || (modi == "wohndichte")) {
           var name = d3.select(this).attr("name");
-          //removeBarChart("#detail-panel2", index, modi);
           exitKwhBar(array, index, modi, name);
-          console.log("del "+name);
-          console.log(phhCityName, phhCityValue);
         }
+
         i -= 1;
         groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
       }
