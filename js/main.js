@@ -32,13 +32,21 @@ var groupPhh = 0;
 var groupSize = 0;
 
 var red = d3.rgb(222,45,38);
-var pink = d3.rgb(255,105,180);
+var selectedColor = d3.rgb(255,105,180);
 var linearGreen = [d3.rgb(237,248,251),d3.rgb(0,109,44)];
 var linearRed = [d3.rgb(254,224,210),d3.rgb(222,45,38)];
 var linearBlue = [d3.rgb(222,235,247),d3.rgb(49,130,189)];
 var linearGray = [d3.rgb(240,240,240),d3.rgb(99,99,99)];
 var linearOrange = [d3.rgb(254,230,206),d3.rgb(230,85,13)];
 var linearLila = [d3.rgb(239,237,245),d3.rgb(117,107,177)];
+var colorOrdinal = d3.scale.ordinal()
+    .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
+
+var phhName = [], phhCityName = [], phhCityValue = [];
+var groupValue = [], phhKey = [];
+var margin = {top: 20, right: 20, bottom: 80, left: 40},
+    width = 760 - margin.left - margin.right,
+    height = 270 - margin.top - margin.bottom;
 
 function countPhh (data) {
   var onePhh = 0, twoPhh = 0, threePhh = 0, fourPhh = 0, fivePhh = 0;
@@ -315,7 +323,7 @@ function legende (data, color, title, id) {
   .domain([d3.min(data), d3.max(data)])
   .range([color[0], color[1]]);
   colorlegend("#legende", lScale, "linear", 
-  {title: title, boxWidth: 38, linearBoxes: 20, id: id});
+  {title: title, boxWidth: 760 / 20, linearBoxes: 20, id: id});
 }
 
 
@@ -339,10 +347,10 @@ function colorId (selection, value, id, color, max, min) {
 
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
 
-function groupedBarChart (data, panelName) {
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
-      width = 6000 - margin.left - margin.right,
-      height = 250 - margin.top - margin.bottom;
+function allCityBarChart (data, panelName, modi, index) {
+  var margin = {top: 20, right: 20, bottom: 80, left: 40},
+      width = 2000 - margin.left - margin.right,
+      height = 270 - margin.top - margin.bottom;
 
   var x0 = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1);
@@ -370,18 +378,88 @@ function groupedBarChart (data, panelName) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// Liste mit Spaltenname der Haushalte
- var phhName = d3.keys(data[0])
-  .filter(function(key) { 
-    return key !== "number"
-          &&key !== "stadtteil"
-          && key !== "sumphh"
-          && key !== "prohh"
-          && key !== "einwohnerqkm"
-          && key !== "stadtflaecheqkm"
-          && key !== "einwohner"; 
-  });
-  //console.log(phhName);
+  if (modi == "einwohner") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"
+            && key !== "einphh"
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "wohndichte") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"
+            && key !== "einphh"
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "sumphh") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "einwohnerqkm"
+            && key !== "prohh"
+            && key !== "einphh"
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "kwheachphh") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "prohh") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "einphh"
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+ 
 
   data.forEach(function (d) {
     d.phhValue = phhName.map(function (name) {
@@ -401,22 +479,28 @@ function groupedBarChart (data, panelName) {
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "start")
+      .attr("dx", ".9em")
+      .attr("dy", ".3em")
+      .attr("transform", "rotate(55)" );
 
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
     .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
+      .attr("x", 0)
+      .attr("y", -10)
       .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Stromverbrauch in kWh");
+      .style("text-anchor", "start")
+      .text("Modus: "+modi);
 
   var phh = svg.selectAll(".part")
       .data(data)
     .enter().append("g")
       .attr("class", "part")
+      .attr("name", function(d) {return d.stadtteil})
       .attr("transform", function(d) { return "translate(" + x0(d.stadtteil) + ",0)"; });
 
   phh.selectAll("rect")
@@ -436,7 +520,6 @@ function groupedBarChart (data, panelName) {
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-
   legend.append("rect")
       .attr("x", width - 18)
       .attr("width", 18)
@@ -451,10 +534,181 @@ function groupedBarChart (data, panelName) {
       .text(function(d) { return d; });
 }
 
+function groupedBarChart (data, panelName, modi, index) {
+  data.forEach(function (d) {
+    d.groupValue = phhKey.map(function (name, i) {
+      return {name: name, value: d[name][index]};
+    });
+  });
+
+  var x0 = d3.scale.ordinal()
+      .domain(data.map(function(d, i) { return d.stadtteil[index] }))
+      .rangeRoundBands([0, width], 0.1);
+
+  var x1 = d3.scale.ordinal()
+      .domain(phhKey)
+      .rangeRoundBands([0, x0.rangeBand()]);
+
+  var y = d3.scale.linear()
+      .domain([0, d3.max(data, function(d) { 
+        return d3.max(d.groupValue, function(d) { 
+          return d.value; 
+        }); 
+      })])
+      .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
+
+  var svg = d3.select(panelName).append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .attr("barid", index+"-"+modi)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+  svg.append("text")
+    .attr("x", 0)
+    .attr("y", -10)
+    .attr("dy", ".71em")
+    .style("text-anchor", "start")
+    .text("Modus: "+modi);
+
+  var phh = svg.selectAll(".part")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "part")
+      .attr("name", function(d) {return d.stadtteil[index]})
+      .attr("transform", function(d, i) { 
+        return "translate(" + x1(phhKey[i]) + ",0)"; 
+      });   
+
+  var legend = svg.selectAll(".legend")
+      .data(phhName.slice().reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", colorOrdinal);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d; });
+
+  var rect = phh.selectAll("rect")
+      .data(function(d) { return d.groupValue; });
+
+  return rect;
+}
+
+function drawGroupBar (data, panelName, modi, index) {
+  phhKey.push("residenteinphh");
+  phhKey.push("residentzweiphh");
+  phhKey.push("residentdreiphh");
+  phhKey.push("residentvierphh");
+  phhKey.push("residentfuenfphh");
+  //phhCityName.push(data[0][modi][index]);
+  for (var i = 0; i < phhKey.length; i++) {
+    groupValue.push(+data[0][phhKey[i]][index]);
+  }
+  
+  console.log(groupValue);
+
+  data.forEach(function (d) {
+    d.groupValue = phhKey.map(function (name, i) {
+      return {name: name, value: d[name][index]};
+    });
+    console.log(phhKey, d.groupValue);
+  });
+
+
+  var x0 = d3.scale.ordinal()
+      .domain(data.map(function(d) { return d.stadtteil}))
+      .rangeRoundBands([0, width], 0);
+
+  var x1 = d3.scale.ordinal()
+      .domain(phhKey)
+      .rangeRoundBands([0, x0.rangeBand()]);
+
+  var y = d3.scale.linear()
+      .domain([0, d3.max(data, function(d) { 
+        return d3.max(d.groupValue, function(d) { 
+          return d.value; 
+        }); 
+      })])
+      .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
+
+
+  if (toString.call(svgPhhBar) !== "[object Array]") {
+    //removeAllBarChart("#detail-panel2");
+    var svgPhhBar = groupedBarChart(data, "#detail-panel2", modi, index);
+  }
+
+  svgPhhBar.enter()
+      .append("rect")
+      .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x1(d.name); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .style("fill", function(d) { return colorOrdinal(d.name); })
+      .append("title")
+      .text(function(d) {return d.value});
+
+  svgPhhBar.exit()
+    .attr("y", y(0))
+    .attr("height", height - y(0))
+    .style('fill-opacity', 1e-6)
+    .remove();  
+
+  svgPhhBar //Update
+    .attr("x", function(d) {return x1(d.name)})
+    .attr("y", function(d) {return y(d.value)})
+    .attr("width",  x1.rangeBand())
+    .attr("height", function(d) {return height - y(d.value)});
+
+
+  return svgPhhBar;
+}
+
+function exitBar(array, index, modi, name) {
+  groupValue.splice(phhCityName.indexOf(name),1);
+  phhCityName.splice(phhCityName.indexOf(name),1);
+
+}
+
 function createPhhBar (modi, panelName, array, index) {
-  var color = d3.scale.ordinal()
-    .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
-    
   var data = array[0];
 
   //phhName = d3.merge([phhName], array[modi]);
@@ -518,7 +772,7 @@ function createPhhBar (modi, panelName, array, index) {
     .attr("y", function(d) {return y(d.value)})
     .attr("width",  x.rangeBand())
     .attr("height", function(d) {return height - y(d.value)})
-    .attr("fill",function(d) { return color(d.name)})
+    .attr("fill",function(d) { return colorOrdinal(d.name)})
     .append("title")
     .text(function(d) {return d.value});  
 
@@ -536,10 +790,11 @@ function createPhhBar (modi, panelName, array, index) {
     .attr("y", -10)
     //.attr("dy", ".71em")
     .style("text-anchor", "start")
-    .text("Modus: "+modi+": "+data["stadtteil"][index]);
+    .text(data["stadtteil"][index]+", Modus: "+modi);
 
-    return phh;
+    return rect;
 }
+
 
 function createBar (modi, panelName, array, index, color) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -621,17 +876,7 @@ var xAxis = d3.svg.axis()
   return svg;
 }
 
-var phhName = [], phhCityName = [], phhCityValue = [];
-var colorOrdinal = d3.scale.ordinal()
-  .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
-var margin = {top: 20, right: 20, bottom: 80, left: 40},
-    width = 760 - margin.left - margin.right,
-    height = 270 - margin.top - margin.bottom;
-
-function createkwhPhhBar(modi, panelName, array, index) {
-  var color = d3.scale.ordinal()
-    .range(["#1f78b4", "#ff7f00", "#df65b0", "#e31a1c", "#33a02c"]);
-  
+function createkwhPhhBar(modi, panelName, array, index) { 
   array.forEach(function (d) {
     d.phhCityValue = phhCityName.map(function (name,i) {
       return {name: name, value: phhCityValue[i]};
@@ -686,7 +931,7 @@ function createkwhPhhBar(modi, panelName, array, index) {
     .selectAll("text")
     .style("text-anchor", "start")
     .attr("dx", ".9em")
-    .attr("dy", "-.55em")
+    .attr("dy", "0em")
     .attr("transform", "rotate(45)" );
 
   svg.append("g")
@@ -736,7 +981,12 @@ function drawKwhBar(array, index, modi) {
   if (toString.call(svgKwhPhhBar) !== "[object Array]") {
     removeAllBarChart("#detail-panel2");
     var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel2", array, index);
-  }   
+  } 
+  /*else if (toString.call(svgKwhPhhBar) !== "[object Array]"
+    && d3.selectAll("#tab1").classed("active")) {
+    removeAllBarChart("#detail-panel");
+    var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel", array, index);
+  } */  
 
   svgKwhPhhBar.enter()
     .append("rect")
@@ -794,7 +1044,12 @@ function exitKwhBar (array, index, modi, name) {
   if (toString.call(svgKwhPhhBar) !== "[object Array]") {
     removeAllBarChart("#detail-panel2");
     var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel2", array, index);
-  }   
+  } 
+  /*else if (toString.call(svgKwhPhhBar) !== "[object Array]"
+    && d3.selectAll("#tab1").classed("active")) {
+    removeAllBarChart("#detail-panel");
+    var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel", array, index);
+  } */   
 
   svgKwhPhhBar.enter()
     .append("rect")
@@ -834,13 +1089,12 @@ function removeAllBarChart (panelName) {
   .remove();
 }
  
-function removeBar (panelName, id, modi) {
+function removeBar (panelName, id) {
   d3.selectAll(panelName + " svg [id='"+id+"']").remove();
 }
 
-function removeBarById (panelName, id) {
-  d3.selectAll(panelName + " svg [id='"+id+"']").remove();
-
+function removeBarByName (panelName, name) {
+  d3.selectAll(panelName + " svg [name='"+name+"']").remove();
 }
 
 function polygonInteraction (selection, pointer, color, max, min, modi, data) {
@@ -862,18 +1116,30 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
       var kwhallphh = picker("kwhallphh", index);
       array = pickerArray(modi, index);
 
+      if (d3.select(this).attr("checked") == true) {
+        d3.selectAll(".note").style("display", "block");
+      } else {
+        d3.selectAll(".note").style("display", "none");
+      }
+
+      if (d3.select(this).attr("checked") == null) {
+        d3.selectAll(".note").style("display", "none");
+      } else {
+        d3.selectAll(".note").style("display", "block");
+      }
+
       if (d3.select(this).attr("checked") == null) {
         d3.select(this).attr("checked", true);
-        d3.select(this).attr("fill", pink)
+        d3.select(this).attr("fill", selectedColor)
         .attr("fill-opacity", 1);
+        
         createBar(modi, "#detail-panel", pickerArray(), index, color[1]);
-
+        
         if ((modi == "allphh") 
           || (modi == "einwohner") 
           || (modi == "kwhallphh")
           || (modi == "kwhhead") 
           || (modi == "wohndichte")) {
-
           if (modi == "allphh") {
             phhName = [];
             phhName.push("einphh");
@@ -881,7 +1147,9 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("dreiphh");
             phhName.push("vierphh");
             phhName.push("fuenfphh");
+            removeBarChart("#detail-panel2", index, modi);
             createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
+            //drawGroupBar(pickerArray(), "#detail-panel2", modi, index);
           }
           else if (modi == "einwohner") {
             phhName = [];
@@ -890,7 +1158,9 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("residentdreiphh");
             phhName.push("residentvierphh");
             phhName.push("residentfuenfphh");
+            removeBarChart("#detail-panel2", index, modi);
             createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
+            //drawGroupBar(pickerArray(), "#detail-panel2", modi, index);
           }
           else if (modi == "kwhhead") {
             phhName = [];
@@ -909,6 +1179,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("kwhdreiphh");
             phhName.push("kwhvierphh");
             phhName.push("kwhfuenfphh");
+            removeBarChart("#detail-panel2", index, modi);
             createPhhBar(modi, "#detail-panel2", pickerArray(), index);
           }
           else if (modi == "wohndichte") {
@@ -917,6 +1188,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           }
           else { console.log("Notallowed")}
         }
+
         else if ((modi == "kwheinphh") 
           || (modi == "kwhzweiphh") 
           || (modi == "kwhdreiphh")
@@ -963,10 +1235,15 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           var name = d3.select(this).attr("name");
           exitKwhBar(array, index, modi, name);
         }
-
+        if ((modi == "einwohner")
+          || (modi == "allphh")
+          || (modi == "kwhallphh")) {
+          var name = d3.select(this).attr("name");
+          removeBarByName("#detail-panel2", name);
+        }
         i -= 1;
         groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
-      }
+      } 
     });
 }
 
@@ -1011,6 +1288,8 @@ function initMap (data, value, color, max, min, modi) {
       removeAllBarChart("#detail-panel2");
       phhCityValue = [];
       phhCityName = [];
+      phhKey = [];
+      groupValue = [];
       clearGroupedArray();
       for (var i = 0; i < data.length; i++) {
         colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
@@ -1028,48 +1307,68 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
 
   valuesDetails(data);
   initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
+  allCityBarChart(data, "#detail-panel3", "einwohner");
 
   function switchLegends (index) {
     switch (index) {
       case "0": 
         legende(resident, linearGreen, "Einwohneranzahl", 0);
         initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "einwohner");
       break;
       case "1":
         legende(diversity, linearRed, "Wohndichte", 1);
         initMap(data, diversity, linearRed, 13606, 170, "wohndichte");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "wohndichte");
       break;
       case "2":
         legende(energyHeadSumPhh, linearLila, "Stromverbrauch pro Kopf", 2);
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "prohh");        
         initMap(data, energyHeadSumPhh, linearLila, 1722, 1338, "kwhhead");
       break;
       case "3":
         legende(sumPhh, linearGray, "Gesamt Haushaltsgroessen", 3);
         initMap(data, sumPhh, linearGray, 25105, 459, "allphh");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "sumphh");
       break;
       case "4":
         legende(energySumPhh, linearOrange, "Gesamt Stromverbrauch", 4);
+        removeAllBarChart("#detail-panel3");
         initMap(data, energySumPhh, linearOrange, 65481260, 1588240, "kwhallphh");
       break;
       case "5":
         legende(sumOnePhh, linearBlue, "Stromverbrauch Ein-PHH", 5);
         initMap(data, sumOnePhh, linearBlue, 35009900, 264450, "kwheinphh");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "kwheachphh");
       break;
       case "6":
         legende(sumTwoPhh, linearBlue, "Stromverbrauch Zwei-PHH", 6);
         initMap(data, sumTwoPhh, linearBlue, 18758320, 505680, "kwhzweiphh");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "kwheachphh");
       break;
       case "7":
         legende(sumThreePhh, linearBlue, "Stromverbrauch Drei-PHH", 7);
         initMap(data, sumThreePhh, linearBlue, 9481050, 360450, "kwhdreiphh");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "kwheachphh");
       break;
       case "8":
         legende(sumFourPhh, linearBlue, "Stromverbrauch Vier-PHH", 8);
         initMap(data, sumFourPhh, linearBlue, 7281750, 361000, "kwhvierphh");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "kwheachphh");
       break;
       case "9":
         legende(sumFivePhh, linearBlue, "Stromverbrauch Fuenf-PHH", 9);
         initMap(data, sumFivePhh, linearBlue, 4602090, 96660, "kwhfuenfphh");
+        removeAllBarChart("#detail-panel3");
+        allCityBarChart(data, "#detail-panel3", "kwheachphh");
       break; 
     }  
   }
@@ -1092,14 +1391,9 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
       removeAllBarChart("#detail-panel2");
       phhCityValue = [];
       phhCityName = [];
+      phhKey = [];
+      groupValue = [];
     }   
   });
 
-
-////////////////Balken diagramme für Detail Panel////////////////////
-
-
-  groupedBarChart(data, "#detail-panel3");
- 
-   
 });

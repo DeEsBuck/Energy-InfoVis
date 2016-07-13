@@ -222,6 +222,10 @@ div.bar {
 	margin-right: 5px;
 }
 
+.note {
+	display: block;
+}
+
 .axis path,
 .axis line {
     fill: none;
@@ -236,5 +240,10 @@ text {
 }
 
 #Viertel_Flaeche {
+	cursor: pointer;
+}
+
+#second-panel rect:hover {
+	fill: brown;
 	cursor: pointer;
 }
