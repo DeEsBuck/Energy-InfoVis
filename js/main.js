@@ -32,7 +32,7 @@ var groupSize = 0;
 
 var red = d3.rgb(222,45,38);
 var selectedColor = d3.rgb(129,15,124);
-var linearGreen = [d3.rgb(237,248,251),d3.rgb(0,109,44)];
+var linearGreen = [d3.rgb(255,255,204),d3.rgb(0,109,44)];
 var linearRed = [d3.rgb(254,240,217),d3.rgb(179,0,0)];
 var linearBlue = [d3.rgb(246,239,247),d3.rgb(1,108,89)];
 var linearGray = [d3.rgb(240,240,240),d3.rgb(99,99,99)];
