@@ -164,6 +164,7 @@ h3, h4 {
 #detail-panel,
 #detail-panel2,
 #detail-panel3 {
+	height: 320px;
 	overflow: auto !important;
 	background-color: #eee;
 }
@@ -220,7 +221,7 @@ h3, h4 {
 div.bar {
 	display: inline-block;
 	width: 20px;
-	height: 75px;   /* We'll override this later */
+	height: 75px;
 	background-color: teal;
 	margin-right: 5px;
 }
@@ -246,7 +247,10 @@ text {
 	cursor: pointer;
 }
 
-#second-panel rect:hover {
-	fill: brown;
+#detail-panel rect:hover,
+#detail-panel2 .part rect:hover,
+#detail-panel2 .bar rect:hover,
+#detail-panel3 rect:hover {
+	fill: brown !important;
 	cursor: pointer;
 }

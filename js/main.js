@@ -328,7 +328,7 @@ function legende (data, type, color, title, id) {
   var max = d3.max(data);
   if (type == "linear") {
     var lScale = d3.scale.linear()
-    .domain([d3.min(data), d3.max(data)])
+    .domain([min, max])
     .range([color[0], color[1]]);
     colorlegend("#legende", lScale, "linear", 
     {title: title, boxWidth: 760 / 20, linearBoxes: 20, id: id});
@@ -390,7 +390,14 @@ function colorIdQuantile (selection, value, color, id, data) {
 }
 
 ////////////////Funktion Balken diagramme für Detail Panel////////////////////
-
+/**
+* Creates Chart related to the csv for each city. Domain can be grouped
+* @param data 
+* @param panelName
+* @param modi := der Kontext der Map
+* @param index == id := Stadtteilekennung
+* @return
+**/
 function allCityBarChart (data, panelName, modi, index) {
   var margin = {top: 20, right: 20, bottom: 80, left: 40},
       width = 2000 - margin.left - margin.right,
@@ -419,7 +426,7 @@ function allCityBarChart (data, panelName, modi, index) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  if (modi == "einwohner") {
+  if (modi == "Einwohneranzahl") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -436,7 +443,7 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "phhValue"; 
     });
   }
-  else if (modi == "wohndichte") {
+  else if (modi == "Einwohner pro qkm") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -453,7 +460,7 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "phhValue"; 
     });
   }
-  else if (modi == "sumphh") {
+  else if (modi == "Anzahl der Haushalte") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -470,7 +477,7 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "phhValue"; 
     });
   }
-  else if (modi == "kwheachphh") {
+  else if (modi == "Gesamtanzahl pro Haushalt") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -483,7 +490,7 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "phhValue"; 
     });
   }
-  else if (modi == "prohh") {
+  else if (modi == "Durchschnitt Einwohner") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -494,6 +501,91 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "dreiphh"
             && key !== "vierphh"
             && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "Anzahl Ein-PHH") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"            
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "Anzahl Zwei-PHH") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"            
+            && key !== "einphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "Anzahl Drei-PHH") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"            
+            && key !== "einphh"
+            && key !== "zweiphh"
+            && key !== "vierphh"
+            && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "Anzahl Vier-PHH") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"            
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "einphh"
+            && key !== "funfphh"
+            && key !== "einwohnerqkm"
+            && key !== "stadtflaecheqkm"
+            && key !== "einwohner"
+            && key !== "phhValue"; 
+    });
+  }
+  else if (modi == "Anzahl Fuenf-PHH") {
+    var phhName = d3.keys(data[0])
+    .filter(function(key) { 
+      return key !== "number"
+            &&key !== "stadtteil"
+            && key !== "sumphh"
+            && key !== "prohh"            
+            && key !== "zweiphh"
+            && key !== "dreiphh"
+            && key !== "vierphh"
+            && key !== "einphh"
             && key !== "einwohnerqkm"
             && key !== "stadtflaecheqkm"
             && key !== "einwohner"
@@ -533,7 +625,7 @@ function allCityBarChart (data, panelName, modi, index) {
       .attr("y", -10)
       .attr("dy", ".71em")
       .style("text-anchor", "start")
-      .text("Modus: "+modi);
+      .text("Übersicht: "+modi);
 
   var phh = svg.selectAll(".part")
       .data(data)
@@ -573,19 +665,22 @@ function allCityBarChart (data, panelName, modi, index) {
       .text(function(d) { return d; });
 }
 
+/**
+* Implements a barChart which groups phh for each citypart 
+* plott in the scale for each Group the scale should grow and add the Objects by Citypart
+* @param data
+* @param panelName 
+* @param modi := Context of the Map
+* @param index == id := Stadtteilekennung
+* @return
+**/
 function groupedBarChart (data, panelName, modi, index) {
-  data.forEach(function (d) {
-    d.groupValue = phhKey.map(function (name, i) {
-      return {name: name, value: d[name][index]};
-    });
-  });
-
   var x0 = d3.scale.ordinal()
-      .domain(data.map(function(d, i) { return d.stadtteil[index] }))
-      .rangeRoundBands([0, width], 0.1);
+      .domain(data.map(function(d) { return d.groupValue; }))
+      .rangeRoundBands([0, width], .1);
 
   var x1 = d3.scale.ordinal()
-      .domain(phhKey)
+      .domain(phhCityName)
       .rangeRoundBands([0, x0.rangeBand()]);
 
   var y = d3.scale.linear()
@@ -597,7 +692,7 @@ function groupedBarChart (data, panelName, modi, index) {
       .range([height, 0]);
 
   var xAxis = d3.svg.axis()
-      .scale(x0)
+      .scale(x1)
       .orient("bottom");
 
   var yAxis = d3.svg.axis()
@@ -615,7 +710,12 @@ function groupedBarChart (data, panelName, modi, index) {
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "start")
+      .attr("dx", ".9em")
+      .attr("dy", ".3em")
+      .attr("transform", "rotate(55)" );
 
   svg.append("g")
       .attr("class", "y axis")
@@ -626,17 +726,7 @@ function groupedBarChart (data, panelName, modi, index) {
     .attr("y", -10)
     .attr("dy", ".71em")
     .style("text-anchor", "start")
-    .text("Modus: "+modi);
-
-  var phh = svg.selectAll(".part")
-      .data(data)
-      .enter()
-      .append("g")
-      .attr("class", "part")
-      .attr("name", function(d) {return d.stadtteil[index]})
-      .attr("transform", function(d, i) { 
-        return "translate(" + x1(phhKey[i]) + ",0)"; 
-      });   
+    .text("Pro Haushaltsgröße: "+modi);   
 
   var legend = svg.selectAll(".legend")
       .data(phhName.slice().reverse())
@@ -657,34 +747,37 @@ function groupedBarChart (data, panelName, modi, index) {
       .style("text-anchor", "end")
       .text(function(d) { return d; });
 
+  var phh = svg.selectAll(".part")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "part")
+      .attr("transform", function(d) { 
+        return "translate(" + 0 + ",0)"; 
+      });
+
   var rect = phh.selectAll("rect")
       .data(function(d) { return d.groupValue; });
 
   return rect;
 }
 
-function drawGroupBar (data, panelName, modi, index) {
-  phhKey.push("residenteinphh");
-  phhKey.push("residentzweiphh");
-  phhKey.push("residentdreiphh");
-  phhKey.push("residentvierphh");
-  phhKey.push("residentfuenfphh");
-  for (var i = 0; i < phhKey.length; i++) {
-    groupValue.push(+data[0][phhKey[i]][index]);
+function drawGroupBar (data, modi, index) {
+  for (var i = 0; i < phhName.length; i++) {
+    phhCityName.push(data[0]["stadtteil"][index]);
+    phhKey.push("resident"+[i+1]+"phh"+index);
+    groupValue.push(+data[0][phhName[i]][index]);
   }
-  
-  console.log(groupValue);
-
+  console.log(phhCityName, phhKey, groupValue);
   data.forEach(function (d) {
     d.groupValue = phhKey.map(function (name, i) {
-      return {name: name, value: d[name][index]};
+      return {name: name, city: phhCityName[i], value: groupValue[i]};
     });
-    console.log(phhKey, d.groupValue);
   });
 
   var x0 = d3.scale.ordinal()
-      .domain(data.map(function(d) { return d.stadtteil}))
-      .rangeRoundBands([0, width], 0);
+      .domain(function(d, i) { return d.groupValue;})
+      .rangeRoundBands([0, width], .1);
 
   var x1 = d3.scale.ordinal()
       .domain(phhKey)
@@ -698,16 +791,69 @@ function drawGroupBar (data, panelName, modi, index) {
       })])
       .range([height, 0]);
 
-  var xAxis = d3.svg.axis()
-      .scale(x0)
-      .orient("bottom");
+  if (toString.call(svgPhhBar) !== "[object Array]") {
+    removeAllBarChart("#detail-panel2");
+    var svgPhhBar = groupedBarChart(data, "#detail-panel2", modi, index);
+  }
 
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      .tickFormat(d3.format(".2s"));
+  svgPhhBar.enter()
+    .append("rect")
+    .attr("width", x1.rangeBand())
+    .attr("x", function(d) { return x1(d.name); })
+    .attr("y", function(d) { return y(d.value); })
+    .attr("height", function(d) { return height - y(d.value); })
+    .attr("name", function(d) {return d.city})
+    .style("fill", function(d) { return colorOrdinal(d.name); })
+    .append("title")
+    .text(function(d) {return d.value});
+
+  svgPhhBar.exit()
+    .attr("y", y(0))
+    .attr("height", height - y(0))
+    .style('fill-opacity', 1e-6)
+    .remove();  
+
+  svgPhhBar //Update
+    .attr("x", function(d) {return x1(d.name)})
+    .attr("y", function(d) {return y(d.value)})
+    .attr("width",  x1.rangeBand())
+    .attr("height", function(d) {return height - y(d.value)});
+
+  return svgPhhBar;
+}
+
+function exitGroupBar (data, index, modi, name) {
+  var found = phhCityName.indexOf(name);
+  for (var i = 0; i < phhName.length; i++) {
+    groupValue.splice(found,1);
+    phhKey.splice(found,1);
+    phhCityName.splice(found,1);
+  }
+  
+  data.forEach(function (d) {
+    d.groupValue = phhKey.map(function (name, i) {
+      return {name: name, city: phhCityName[i], value: groupValue[i]};
+    });
+  });
+
+  var x0 = d3.scale.ordinal()
+      .domain(function(d, i) { return d.groupValue;})
+      .rangeRoundBands([0, width], .1);
+
+  var x1 = d3.scale.ordinal()
+      .domain(phhKey)
+      .rangeRoundBands([0, x0.rangeBand()]);
+
+  var y = d3.scale.linear()
+      .domain([0, d3.max(data, function(d) { 
+        return d3.max(d.groupValue, function(d) { 
+          return d.value; 
+        }); 
+      })])
+      .range([height, 0]);
 
   if (toString.call(svgPhhBar) !== "[object Array]") {
+    removeAllBarChart("#detail-panel2");
     var svgPhhBar = groupedBarChart(data, "#detail-panel2", modi, index);
   }
 
@@ -807,7 +953,6 @@ function createPhhBar (modi, panelName, array, index) {
     .append("text")
     .attr("x", 0)
     .attr("y", -10)
-    //.attr("dy", ".71em")
     .style("text-anchor", "start")
     .text(data["stadtteil"][index]+", Modus: "+modi);
 
@@ -938,7 +1083,9 @@ function createkwhPhhBar(modi, panelName, array, index) {
     .enter()
     .append("g")
     .attr("class", "bar")
-    .attr("transform", function(d, i) { return "translate(" + xScale(d[index]) + ",0)"; });
+    .attr("transform", function(d, i) { 
+      return "translate(" + xScale(d[index]) + ",0)"; 
+    });
 
   svg.append("g")
     .attr("class", "x axis")
@@ -1117,7 +1264,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
         d3.select(this).attr("fill", selectedColor)
         .attr("fill-opacity", 1);
         
-        createBar(modi, "#detail-panel", pickerArray(), index, color[1]);
+        createBar(modi, "#detail-panel", array, index, color[1]);
         
         if ((modi == "allphh") 
           || (modi == "einwohner") 
@@ -1132,8 +1279,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("vierphh");
             phhName.push("fuenfphh");
             removeBarChart("#detail-panel2", index, modi);
-            createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
-            //drawGroupBar(pickerArray(), "#detail-panel2", modi, index);
+            //createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
+            drawGroupBar(array, "#detail-panel2", modi, index);
           }
           else if (modi == "einwohner") {
             phhName = [];
@@ -1143,8 +1290,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("residentvierphh");
             phhName.push("residentfuenfphh");
             removeBarChart("#detail-panel2", index, modi);
-            createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
-            //drawGroupBar(pickerArray(), "#detail-panel2", modi, index);
+            //createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
+            drawGroupBar(array, modi, index);
           }
           else if (modi == "kwhhead") {
             phhName = [];
@@ -1154,7 +1301,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("avgkwhheadvierphh");
             phhName.push("avgkwhheadfuenfphh");
             removeAllBarChart("#detail-panel2", index, modi);
-            createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
+            createPhhBar(modi, "#detail-panel2", array, index);            
           }
           else if (modi == "kwhallphh") {
             phhName = [];
@@ -1164,7 +1311,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("kwhvierphh");
             phhName.push("kwhfuenfphh");
             removeBarChart("#detail-panel2", index, modi);
-            createPhhBar(modi, "#detail-panel2", pickerArray(), index);
+            //createPhhBar(modi, "#detail-panel2", pickerArray(), index);
+            drawGroupBar(array, modi, index);
           }
           else if (modi == "wohndichte") {
             removeBarChart("#detail-panel2", index, modi);
@@ -1223,7 +1371,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           || (modi == "allphh")
           || (modi == "kwhallphh")) {
           var name = d3.select(this).attr("name");
-          removeBarByName("#detail-panel2", name);
+          exitGroupBar(array, index, modi, name);
         }
         i -= 1;
         groupedValues(i, false, modi, index, data, kwhhead[0].value, kwhallphh[0].value);
@@ -1293,7 +1441,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
   valuesDetails(data);
   initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
   legende(resident, "linear", linearGreen, "Einwohneranzahl", 0);
-  allCityBarChart(data, "#detail-panel3", "einwohner");
+  allCityBarChart(data, "#detail-panel3", "Einwohneranzahl");
 
   function switchLegends (index) {
     switch (index) {
@@ -1301,20 +1449,20 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
         legende(resident, "linear", linearGreen, "Einwohneranzahl", 0);
         initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "einwohner");
+        allCityBarChart(data, "#detail-panel3", "Einwohneranzahl");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "1":
         legende(diversity, "linear", linearRed, "Wohndichte", 1);
         initMap(data, diversity, linearRed, 13606, 170, "wohndichte");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "wohndichte");
+        allCityBarChart(data, "#detail-panel3", "Einwohner pro qkm");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "2":
         legende(energyHeadSumPhh, "linear", linearLila, "Stromverbrauch pro Kopf", 2);
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "prohh");        
+        allCityBarChart(data, "#detail-panel3", "Durchschnitt Einwohner");        
         initMap(data, energyHeadSumPhh, linearLila, 1722, 1338, "kwhhead");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
@@ -1322,47 +1470,49 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
         legende(sumPhh, "linear", linearPink, "Gesamt Haushaltsgroessen", 3);
         initMap(data, sumPhh, linearPink, 25105, 459, "allphh");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "sumphh");
+        allCityBarChart(data, "#detail-panel3", "Anzahl der Haushalte");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "4":
         legende(energySumPhh, "linear", linearOrange, "Gesamt Stromverbrauch", 4);
         removeAllBarChart("#detail-panel3");
         initMap(data, energySumPhh, linearOrange, 65481260, 1588240, "kwhallphh");
+        allCityBarChart(data, "#detail-panel3", "Gesamtanzahl pro Haushalt");
+        d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "5":
         legende(sumOnePhh, "linear", linearBlue, "Stromverbrauch Ein-PHH", 5);
         initMap(data, sumOnePhh, linearBlue, 35009900, 264450, "kwheinphh");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "kwheachphh");
+        allCityBarChart(data, "#detail-panel3", "Anzahl Ein-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "6":
         legende(sumTwoPhh, "linear", linearBlue, "Stromverbrauch Zwei-PHH", 6);
         initMap(data, sumTwoPhh, linearBlue, 18758320, 505680, "kwhzweiphh");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "kwheachphh");
+        allCityBarChart(data, "#detail-panel3", "Anzahl Zwei-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "7":
         legende(sumThreePhh, "linear", linearBlue, "Stromverbrauch Drei-PHH", 7);
         initMap(data, sumThreePhh, linearBlue, 9481050, 360450, "kwhdreiphh");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "kwheachphh");
+        allCityBarChart(data, "#detail-panel3", "Anzahl Drei-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "8":
         legende(sumFourPhh, "linear", linearBlue, "Stromverbrauch Vier-PHH", 8);
         initMap(data, sumFourPhh, linearBlue, 7281750, 361000, "kwhvierphh");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "kwheachphh");
+        allCityBarChart(data, "#detail-panel3", "Anzahl Vier-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "9":
         legende(sumFivePhh, "linear", linearBlue, "Stromverbrauch Fuenf-PHH", 9);
         initMap(data, sumFivePhh, linearBlue, 4602090, 96660, "kwhfuenfphh");
         removeAllBarChart("#detail-panel3");
-        allCityBarChart(data, "#detail-panel3", "kwheachphh");
+        allCityBarChart(data, "#detail-panel3", "Anzahl Fuenf-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break; 
     }  
