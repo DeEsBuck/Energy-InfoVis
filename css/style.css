@@ -250,6 +250,7 @@ text {
 #detail-panel rect:hover,
 #detail-panel2 .part rect:hover,
 #detail-panel2 .bar rect:hover,
+#detail-panel2 .phh rect:hover,
 #detail-panel3 rect:hover {
 	fill: brown !important;
 	cursor: pointer;

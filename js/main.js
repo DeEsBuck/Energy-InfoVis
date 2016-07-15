@@ -41,8 +41,7 @@ var linearOrange = [d3.rgb(255,255,212),d3.rgb(153,52,4)];
 var linearLila = [d3.rgb(241,238,246),d3.rgb(84,39,143)];
 var redBlueScale = ["rgb(103, 0, 31)", "rgb( 178, 24, 43)", "rgb( 214, 96, 77)", "rgb( 244, 165, 130)", "rgb( 253, 219, 199)", "rgb( 209, 229, 240)", "rgb( 146, 197, 222)", "rgb( 67, 147, 195)", "rgb( 33, 102, 172)", "rgb( 5, 48, 97)"];
 var linear3Color = ["rgb(103, 0, 31)", "rgb(200,200,200)", "rgb( 5, 48, 97)"];
-var colorOrdinal = d3.scale.ordinal()
-    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
+
 
 var phhName = [], phhCityName = [], phhCityValue = [];
 var groupValue = [], phhKey = [];
@@ -403,6 +402,9 @@ function allCityBarChart (data, panelName, modi, index) {
       width = 2000 - margin.left - margin.right,
       height = 270 - margin.top - margin.bottom;
 
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
+
   var x0 = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1);
 
@@ -646,7 +648,7 @@ function allCityBarChart (data, panelName, modi, index) {
       .text(function(d) {return d.value});   
 
   var legend = svg.selectAll(".legend")
-      .data(phhName.slice().reverse())
+      .data(phhName)
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -678,6 +680,9 @@ function groupedBarChart (data, panelName, modi, index) {
   var x0 = d3.scale.ordinal()
       .domain(data.map(function(d) { return d.groupValue; }))
       .rangeRoundBands([0, width], .1);
+
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
 
   var x1 = d3.scale.ordinal()
       .domain(phhCityName)
@@ -729,7 +734,7 @@ function groupedBarChart (data, panelName, modi, index) {
     .text("Pro Haushaltsgröße: "+modi);   
 
   var legend = svg.selectAll(".legend")
-      .data(phhName.slice().reverse())
+      .data(phhName)
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -768,7 +773,10 @@ function drawGroupBar (data, modi, index) {
     phhKey.push("resident"+[i+1]+"phh"+index);
     groupValue.push(+data[0][phhName[i]][index]);
   }
-  console.log(phhCityName, phhKey, groupValue);
+
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
+
   data.forEach(function (d) {
     d.groupValue = phhKey.map(function (name, i) {
       return {name: name, city: phhCityName[i], value: groupValue[i]};
@@ -824,6 +832,10 @@ function drawGroupBar (data, modi, index) {
 
 function exitGroupBar (data, index, modi, name) {
   var found = phhCityName.indexOf(name);
+
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
+
   for (var i = 0; i < phhName.length; i++) {
     groupValue.splice(found,1);
     phhKey.splice(found,1);
@@ -884,6 +896,8 @@ function exitGroupBar (data, index, modi, name) {
 
 function createPhhBar (modi, panelName, array, index) {
   var data = array[0];
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
 
   array.forEach(function (d) {
     d.phhValue = phhName.map(function (name) {
@@ -1117,6 +1131,9 @@ function createkwhPhhBar(modi, panelName, array, index) {
 function drawKwhBar(array, index, modi) {
   phhCityName.push(array[0]["stadtteil"][index]);
   phhCityValue.push(+array[0][modi][index]);
+
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
 
   array.forEach(function (d) {
     d.phhCityValue = phhCityName.map(function (name, i) {
