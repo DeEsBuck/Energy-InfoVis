@@ -1279,8 +1279,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("vierphh");
             phhName.push("fuenfphh");
             removeBarChart("#detail-panel2", index, modi);
-            //createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
-            drawGroupBar(array, "#detail-panel2", modi, index);
+            drawGroupBar(array, modi, index);
           }
           else if (modi == "einwohner") {
             phhName = [];
@@ -1290,7 +1289,6 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("residentvierphh");
             phhName.push("residentfuenfphh");
             removeBarChart("#detail-panel2", index, modi);
-            //createPhhBar(modi, "#detail-panel2", pickerArray(), index);            
             drawGroupBar(array, modi, index);
           }
           else if (modi == "kwhhead") {
@@ -1311,7 +1309,6 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("kwhvierphh");
             phhName.push("kwhfuenfphh");
             removeBarChart("#detail-panel2", index, modi);
-            //createPhhBar(modi, "#detail-panel2", pickerArray(), index);
             drawGroupBar(array, modi, index);
           }
           else if (modi == "wohndichte") {
