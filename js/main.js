@@ -49,6 +49,12 @@ var margin = {top: 20, right: 20, bottom: 80, left: 40},
     width = 760 - margin.left - margin.right,
     height = 270 - margin.top - margin.bottom;
 
+function makeYAxis(y) {
+  return d3.svg.axis()
+      .scale(y)
+      .orient("left")
+}
+
 function countPhh (data) {
   var onePhh = 0, twoPhh = 0, threePhh = 0, fourPhh = 0, fivePhh = 0;
   var countPerPhh = [];
@@ -629,6 +635,13 @@ function allCityBarChart (data, panelName, modi, index) {
       .style("text-anchor", "start")
       .text("Übersicht: "+modi);
 
+  svg.append("g")            
+    .attr("class", "grid")
+    .call(makeYAxis(y)
+        .tickSize(-width, 0, 0)
+        .tickFormat("")
+    );
+
   var phh = svg.selectAll(".part")
       .data(data)
     .enter().append("g")
@@ -677,12 +690,12 @@ function allCityBarChart (data, panelName, modi, index) {
 * @return
 **/
 function groupedBarChart (data, panelName, modi, index) {
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
+
   var x0 = d3.scale.ordinal()
       .domain(data.map(function(d) { return d.groupValue; }))
       .rangeRoundBands([0, width], .1);
-
-  var colorOrdinal = d3.scale.ordinal()
-    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
 
   var x1 = d3.scale.ordinal()
       .domain(phhCityName)
@@ -733,6 +746,13 @@ function groupedBarChart (data, panelName, modi, index) {
     .style("text-anchor", "start")
     .text("Pro Haushaltsgröße: "+modi);   
 
+  svg.append("g")            
+    .attr("class", "grid")
+    .call(makeYAxis(y)
+        .tickSize(-(width-130), 0, 0)
+        .tickFormat("")
+    );
+
   var legend = svg.selectAll(".legend")
       .data(phhName)
     .enter().append("g")
@@ -756,10 +776,7 @@ function groupedBarChart (data, panelName, modi, index) {
       .data(data)
       .enter()
       .append("g")
-      .attr("class", "part")
-      .attr("transform", function(d) { 
-        return "translate(" + 0 + ",0)"; 
-      });
+      .attr("class", "part");
 
   var rect = phh.selectAll("rect")
       .data(function(d) { return d.groupValue; });
@@ -784,7 +801,7 @@ function drawGroupBar (data, modi, index) {
   });
 
   var x0 = d3.scale.ordinal()
-      .domain(function(d, i) { return d.groupValue;})
+      .domain(function(d) { return d.groupValue;})
       .rangeRoundBands([0, width], .1);
 
   var x1 = d3.scale.ordinal()
@@ -825,7 +842,8 @@ function drawGroupBar (data, modi, index) {
     .attr("x", function(d) {return x1(d.name)})
     .attr("y", function(d) {return y(d.value)})
     .attr("width",  x1.rangeBand())
-    .attr("height", function(d) {return height - y(d.value)});
+    .attr("height", function(d) {return height - y(d.value)})
+    .style("");
 
   return svgPhhBar;
 }
@@ -1092,15 +1110,6 @@ function createkwhPhhBar(modi, panelName, array, index) {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  var bar = svg.selectAll(".bar")
-    .data(array)
-    .enter()
-    .append("g")
-    .attr("class", "bar")
-    .attr("transform", function(d, i) { 
-      return "translate(" + xScale(d[index]) + ",0)"; 
-    });
-
   svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
@@ -1121,6 +1130,22 @@ function createkwhPhhBar(modi, panelName, array, index) {
     .attr("dy", ".71em")
     .style("text-anchor", "start")
     .text("Modus: "+modi);
+
+  svg.append("g")            
+    .attr("class", "grid")
+    .call(makeYAxis(y)
+        .tickSize(-width, 0, 0)
+        .tickFormat("")
+    );
+
+  var bar = svg.selectAll(".bar")
+    .data(array)
+    .enter()
+    .append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d, i) { 
+      return "translate(" + xScale(d[index]) + ",0)"; 
+    });
 
   var rect = bar.selectAll("rect")
     .data(function(d) { return d.phhCityValue; }); 
@@ -1191,6 +1216,9 @@ function drawKwhBar(array, index, modi) {
 function exitKwhBar (array, index, modi, name) {
   phhCityValue.splice(phhCityName.indexOf(name),1);
   phhCityName.splice(phhCityName.indexOf(name),1);
+
+  var colorOrdinal = d3.scale.ordinal()
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
 
   array.forEach(function (d) {
     d.phhCityValue = phhCityName.map(function (name, i) {

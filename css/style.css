@@ -243,6 +243,16 @@ text {
     font-size: 9px;
 }
 
+.grid .tick:not(:first-child) {
+    stroke: #ccc;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid path {
+    stroke-width: 0;
+}
+
 #Viertel_Flaeche {
 	cursor: pointer;
 }
@@ -251,7 +261,7 @@ text {
 #detail-panel2 .part rect:hover,
 #detail-panel2 .bar rect:hover,
 #detail-panel2 .phh rect:hover,
-#detail-panel3 rect:hover {
-	fill: brown !important;
+#detail-panel3 .part rect:hover {
+	fill: rgb(129,15,124) !important;
 	cursor: pointer;
 }
