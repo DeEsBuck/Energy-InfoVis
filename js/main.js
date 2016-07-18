@@ -1276,6 +1276,10 @@ function exitKwhBar (array, index, modi, name) {
 function polygonInteraction (selection, pointer, color, max, min, modi, data) {
   var objectId = "", value = "", obj = [], index = 0, i = 0, array = [];
 
+  $(".reset").on("click", function () {
+    i = 0;      
+  });
+
   selection.select("#Viertel_Flaeche").selectAll(pointer)
     .on("mouseover", function () {
       d3.select(this).attr("fill-opacity", .7);
@@ -1468,7 +1472,6 @@ function initMap (data, value, color, max, min, modi) {
       clearGroupedArray();
       for (var i = 0; i < data.length; i++) {
         colorId(innerSVG, String(value[i]), data[i]["number"], color, max, min);
-
       }
       innerSVG.select("#Viertel_Flaeche").selectAll(".pointer").attr("checked", null);
     });
