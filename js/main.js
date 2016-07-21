@@ -46,7 +46,7 @@ var linear3Color = ["rgb(103, 0, 31)", "rgb(200,200,200)", "rgb( 5, 48, 97)"];
 var phhName = [], phhCityName = [], phhCityValue = [];
 var groupValue = [], phhKey = [];
 var margin = {top: 20, right: 20, bottom: 80, left: 40},
-    width = 760 - margin.left - margin.right,
+    width = 720 - margin.left - margin.right,
     height = 270 - margin.top - margin.bottom;
 
 function makeYAxis(y) {
@@ -468,7 +468,7 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "phhValue"; 
     });
   }
-  else if (modi == "Anzahl der Haushalte") {
+  else if (modi == "Gesamtanzahl pro Haushalt") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -485,7 +485,7 @@ function allCityBarChart (data, panelName, modi, index) {
             && key !== "phhValue"; 
     });
   }
-  else if (modi == "Gesamtanzahl pro Haushalt") {
+  else if (modi == "Anzahl der Haushalte") {
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -633,7 +633,7 @@ function allCityBarChart (data, panelName, modi, index) {
       .attr("y", -10)
       .attr("dy", ".71em")
       .style("text-anchor", "start")
-      .text("Übersicht: "+modi);
+      .text("Uebersicht: "+modi);
 
   svg.append("g")            
     .attr("class", "grid")
@@ -744,7 +744,7 @@ function groupedBarChart (data, panelName, modi, index) {
     .attr("y", -10)
     .attr("dy", ".71em")
     .style("text-anchor", "start")
-    .text("Pro Haushaltsgröße: "+modi);   
+    .text("Pro Haushaltsgroesse: "+modi);   
 
   svg.append("g")            
     .attr("class", "grid")
@@ -1348,7 +1348,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("avgkwhheadvierphh");
             phhName.push("avgkwhheadfuenfphh");
             removeAllBarChart("#detail-panel2", index, modi);
-            createPhhBar(modi, "#detail-panel2", array, index);            
+            drawGroupBar(array, modi, index);
+            //createPhhBar(modi, "#detail-panel2", array, index);            
           }
           else if (modi == "kwhallphh") {
             phhName = [];
@@ -1415,7 +1416,8 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
         }
         if ((modi == "einwohner")
           || (modi == "allphh")
-          || (modi == "kwhallphh")) {
+          || (modi == "kwhallphh")
+          || (modi == "kwhhead")) {
           var name = d3.select(this).attr("name");
           exitGroupBar(array, index, modi, name);
         }

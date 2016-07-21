@@ -31,15 +31,14 @@ h3, h4 {
 	display: inline-block;
 }
 
-#main-panel,
-#second-panel {
-	min-width: 790px;
-	height: auto;
+#main-panel {
+	min-width: 770px;
 }
 
 #second-panel {
+	width: 770px;
+	height: auto;
 	float: right;
-	/*margin-left: 10px;*/
 	margin-right: 20px;
 }
 
@@ -49,7 +48,7 @@ h3, h4 {
 	margin-left: 20px;
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (min-width: 992px) and (max-width: 1200px) {
 	body {
 		overflow: auto;
 	}
@@ -113,18 +112,15 @@ h3, h4 {
 	}
 }
 
-@media screen and (min-width: 1025px) and (max-width: 1440px) {
+@media screen and (min-width: 1201px) and (max-width: 1523px) {
 	#main-panel,
 	#second-panel {
+		width: 99%;
 		height: auto;
-		margin-right: 5px;
+		margin-right: 5px !important;
 		margin-left: 5px;
 		margin-top: 5px;
 		margin-bottom: 5px;
-	}
-
-	#main-panel svg {
-		width: 100%;
 	}
 
 	#modi-panel,
@@ -133,14 +129,23 @@ h3, h4 {
 	#detail-panel2,
 	#detail-panel3,
 	#myTabs {
-		width: 600px !important;
-		float: right;
+		min-width: 100%;
+		clear: both;
+	}
+
+	#numbers-panel label {
 		font-size: .85em;
+		line-height: 2em;
+	}
+
+	#numbers-panel,
+	#detail-panel3 {
+		height: 200px;
 	}
 }
 
 #modi-panel {
-	width: 790px;
+	width: 100%;
 	min-height: 200px;
 	border: solid #ccc 1px;
 	padding: 5px;
@@ -153,7 +158,7 @@ h3, h4 {
 #detail-panel2,
 #detail-panel3 {
 	clear: both;
-	width: 790px;
+	width: 100%;
 	min-height: 200px;
 	border: solid #ccc 1px;
 	padding: 5px;
@@ -263,5 +268,4 @@ text {
 #detail-panel2 .phh rect:hover,
 #detail-panel3 .part rect:hover {
 	fill: rgb(129,15,124) !important;
-	cursor: pointer;
 }
