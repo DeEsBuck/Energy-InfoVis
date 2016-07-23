@@ -699,7 +699,7 @@ function groupedBarChart (data, panelName, modi, index) {
 
   var x1 = d3.scale.ordinal()
       .domain(phhCityName)
-      .rangeRoundBands([0, x0.rangeBand()]);
+      .rangeBands([0, x0.rangeBand()]);
 
   var y = d3.scale.linear()
       .domain([0, d3.max(data, function(d) { 
@@ -749,7 +749,7 @@ function groupedBarChart (data, panelName, modi, index) {
   svg.append("g")            
     .attr("class", "grid")
     .call(makeYAxis(y)
-        .tickSize(-(width-130), 0, 0)
+        .tickSize(-(width-120), 0, 0)
         .tickFormat("")
     );
 
@@ -806,7 +806,7 @@ function drawGroupBar (data, modi, index) {
 
   var x1 = d3.scale.ordinal()
       .domain(phhKey)
-      .rangeRoundBands([0, x0.rangeBand()]);
+      .rangeBands([0, x0.rangeBand()]);
 
   var y = d3.scale.linear()
       .domain([0, d3.max(data, function(d) { 
@@ -824,7 +824,7 @@ function drawGroupBar (data, modi, index) {
   svgPhhBar.enter()
     .append("rect")
     .attr("width", x1.rangeBand())
-    .attr("x", function(d) { return x1(d.name); })
+    .attr("x", function(d,i) {return i%5 == 0 ? x1(d.name)+3 : x1(d.name)})
     .attr("y", function(d) { return y(d.value); })
     .attr("height", function(d) { return height - y(d.value); })
     .attr("name", function(d) {return d.city})
@@ -839,9 +839,9 @@ function drawGroupBar (data, modi, index) {
     .remove();  
 
   svgPhhBar //Update
-    .attr("x", function(d) {return x1(d.name)})
+    .attr("x", function(d,i) {return i%5 == 0 ? x1(d.name)+3 : x1(d.name)})
     .attr("y", function(d) {return y(d.value)})
-    .attr("width",  x1.rangeBand())
+    .attr("width", function(d,i) {return i%5 == 0 ? x1.rangeBand()-3 : x1.rangeBand() })
     .attr("height", function(d) {return height - y(d.value)})
     .style("");
 
@@ -872,7 +872,7 @@ function exitGroupBar (data, index, modi, name) {
 
   var x1 = d3.scale.ordinal()
       .domain(phhKey)
-      .rangeRoundBands([0, x0.rangeBand()]);
+      .rangeBands([0, x0.rangeBand()]);
 
   var y = d3.scale.linear()
       .domain([0, d3.max(data, function(d) { 
@@ -904,7 +904,7 @@ function exitGroupBar (data, index, modi, name) {
     .remove();  
 
   svgPhhBar //Update
-    .attr("x", function(d) {return x1(d.name)})
+    .attr("x", function(d,i) {return i%5 == 0 ? x1(d.name)+3 : x1(d.name)})
     .attr("y", function(d) {return y(d.value)})
     .attr("width",  x1.rangeBand())
     .attr("height", function(d) {return height - y(d.value)});
@@ -1084,7 +1084,7 @@ function createkwhPhhBar(modi, panelName, array, index) {
 
   var x = d3.scale.ordinal()
     .domain(phhCityName)
-    .rangeBands([0, xScale.rangeBand()]);
+    .rangeBands([0, xScale.rangeBand()], .05);
 
   var y = d3.scale.linear()
    .domain([0, d3.max(array, function(d) { 
@@ -1172,7 +1172,7 @@ function drawKwhBar(array, index, modi) {
   
   var x = d3.scale.ordinal()
     .domain(phhCityName)
-    .rangeBands([0, xScale.rangeBand()]);
+    .rangeBands([0, xScale.rangeBand()], .05);
 
   var y = d3.scale.linear()
     .domain([0, d3.max(array, function(d) { 
@@ -1228,7 +1228,7 @@ function exitKwhBar (array, index, modi, name) {
 
   var xScale = d3.scale.ordinal()
     .domain(array.map(function(d) { return d.length; }))
-    .rangeBands([0, width], 0);
+    .rangeBands([0, width], .05);
   
   var x = d3.scale.ordinal()
     .domain(phhCityName)
