@@ -178,11 +178,11 @@ function valuesDetails (data) {
   cityEnergyHead = cityEnergy / allResidents;
 
   if (!null) {
-    $("#alleinwohneranzahl").val(allResidents);
-    $("#gesamtverbrauch").val(cityEnergy);
-    $("#verbrauchkopf").val(Math.round(cityEnergyHead * 100) / 100);
-    $("#hhgroessen2").val(cityPhh);
-    $("#gesamtflache").val(Math.round(citySize * 100) / 100);
+    $("#alleinwohneranzahl").val(new Intl.NumberFormat().format(allResidents));
+    $("#gesamtverbrauch").val(new Intl.NumberFormat().format(cityEnergy));
+    $("#verbrauchkopf").val(new Intl.NumberFormat().format(Math.round(cityEnergyHead * 100) / 100));
+    $("#hhgroessen2").val(new Intl.NumberFormat().format(cityPhh));
+    $("#gesamtflache").val(new Intl.NumberFormat().format(Math.round(citySize * 100) / 100));
     
   } else {
     $("#alleinwohneranzahl").val(0);
@@ -221,11 +221,11 @@ function groupedValues (i ,operation, key, index, data, kwhhead, kwhallphh) {
   }
 
   if (!null) {
-    $("#einwohneranzahl").val(groupResidents);
-    $("#stromverbrauch").val(groupEnergy);
-    $("#stromprokopf").val(Math.round(groupEnergyHead * 100) / 100);
-    $("#hhgrose2").val(groupPhh);
-    $("#flache").val(Math.round(groupSize * 100) / 100);
+    $("#einwohneranzahl").val(new Intl.NumberFormat().format(groupResidents));
+    $("#stromverbrauch").val(new Intl.NumberFormat().format(groupEnergy));
+    $("#stromprokopf").val(new Intl.NumberFormat().format(Math.round(groupEnergyHead * 100) / 100));
+    $("#hhgrose2").val(new Intl.NumberFormat().format(groupPhh));
+    $("#flache").val(new Intl.NumberFormat().format(Math.round(groupSize * 100) / 100));
   } else {
     $("#einwohneranzahl").val(0);
     $("#stromverbrauch").val(0);
@@ -658,7 +658,7 @@ function allCityBarChart (data, panelName, modi, index) {
       .attr("height", function(d) { return height - y(d.value); })
       .style("fill", function(d) { return colorOrdinal(d.name); })
       .append("title")
-      .text(function(d) {return d.value});   
+      .text(function(d) {return new Intl.NumberFormat().format(d.value)});   
 
   var legend = svg.selectAll(".legend")
       .data(phhName)
@@ -830,7 +830,7 @@ function drawGroupBar (data, modi, index) {
     .attr("name", function(d) {return d.city})
     .style("fill", function(d) { return colorOrdinal(d.name); })
     .append("title")
-    .text(function(d) {return d.value});
+    .text(function(d) {return new Intl.NumberFormat().format(d.value)});
 
   svgPhhBar.exit()
     .attr("y", y(0))
@@ -972,7 +972,7 @@ function createPhhBar (modi, panelName, array, index) {
     .attr("height", function(d) {return height - y(d.value)})
     .attr("fill",function(d) { return colorOrdinal(d.name)})
     .append("title")
-    .text(function(d) {return d.value});  
+    .text(function(d) {return new Intl.NumberFormat().format(d.value)});  
 
   svg.append("g")
     .attr("class", "x axis")
@@ -1051,7 +1051,7 @@ var xAxis = d3.svg.axis()
       return index != d3.select(this).attr("id") ? d3.select(this).remove() : "block";
     })
     .append("title")
-    .text(array[0][modi][index]);  
+    .text(new Intl.NumberFormat().format(array[0][modi][index]));  
 
   svg.append("g")
     .attr("class", "x axis")
@@ -1196,7 +1196,7 @@ function drawKwhBar(array, index, modi) {
     .attr("name", function(d) {return d.name})
     .attr("fill",function(d) { return colorOrdinal(d.name)})
     .append("title")
-    .text(function(d) {return d.value});  
+    .text(function(d) {return new Intl.NumberFormat().format(d.value)});  
 
   svgKwhPhhBar.exit()
     .attr("y", y(0))
@@ -1458,7 +1458,7 @@ function initMap (data, value, color, max, min, modi) {
       .attr("index", i)
       .attr("name", data[i]["stadtteil"])
       .append("title").text(function() {
-         return data[i]["stadtteil"]+": "+String(value[i]);
+         return data[i]["stadtteil"]+": "+String(new Intl.NumberFormat().format(value[i]));
       });
     }
     polygonInteraction(innerSVG, ".pointer", color, max, min, modi, data);
