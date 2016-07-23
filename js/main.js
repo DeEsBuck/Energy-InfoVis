@@ -1153,7 +1153,7 @@ function createkwhPhhBar(modi, panelName, array, index) {
   return rect;
 }
 
-function drawKwhBar(array, index, modi) {
+function drawKwhBar(array, index, modi, color) {
   phhCityName.push(array[0]["stadtteil"][index]);
   phhCityValue.push(+array[0][modi][index]);
 
@@ -1194,7 +1194,7 @@ function drawKwhBar(array, index, modi) {
     .attr("width",  x.rangeBand())
     .attr("height", function(d) {return height - y(d.value)})
     .attr("name", function(d) {return d.name})
-    .attr("fill",function(d) { return colorOrdinal(d.name)})
+    .attr("fill",function(d) { return color})
     .append("title")
     .text(function(d) {return new Intl.NumberFormat().format(d.value)});  
 
@@ -1213,7 +1213,7 @@ function drawKwhBar(array, index, modi) {
   return svgKwhPhhBar;
 }
 
-function exitKwhBar (array, index, modi, name) {
+function exitKwhBar (array, index, modi, name, color) {
   phhCityValue.splice(phhCityName.indexOf(name),1);
   phhCityName.splice(phhCityName.indexOf(name),1);
 
@@ -1254,7 +1254,7 @@ function exitKwhBar (array, index, modi, name) {
     .attr("width",  x.rangeBand())
     .attr("height", function(d) {return height - y(d.value)})
     .attr("name", function(d) {return d.name})
-    .attr("fill",function(d) { return colorOrdinal(d.name)})
+    .attr("fill",function(d) { return color})
     .append("title")
     .text(function(d) {return d.value});  
 
@@ -1349,7 +1349,6 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
             phhName.push("avgkwhheadfuenfphh");
             removeAllBarChart("#detail-panel2", index, modi);
             drawGroupBar(array, modi, index);
-            //createPhhBar(modi, "#detail-panel2", array, index);            
           }
           else if (modi == "kwhallphh") {
             phhName = [];
@@ -1363,7 +1362,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           }
           else if (modi == "wohndichte") {
             removeBarChart("#detail-panel2", index, modi);
-            drawKwhBar(array, index, modi);
+            drawKwhBar(array, index, modi, color[1]);
           }
           else { console.log("Error")}
         }
@@ -1375,23 +1374,23 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           || (modi == "kwhfuenfphh")) {
           if (modi == "kwheinphh") {
             removeBarChart("#detail-panel2", index, modi);
-            drawKwhBar(array, index, modi);
+            drawKwhBar(array, index, modi, color[1]);
           }
           else if (modi == "kwhzweiphh") {
             removeBarChart("#detail-panel2", index, modi);
-            drawKwhBar(array, index, modi);
+            drawKwhBar(array, index, modi, color[1]);
           }
           else if (modi == "kwhdreiphh") {
             removeBarChart("#detail-panel2", index, modi);
-            drawKwhBar(array, index, modi);
+            drawKwhBar(array, index, modi, color[1]);
           }
           else if (modi == "kwhvierphh") {
             removeBarChart("#detail-panel2", index, modi);
-            drawKwhBar(array, index, modi);
+            drawKwhBar(array, index, modi, color[1]);
           }
           else if (modi == "kwhfuenfphh") {
             removeBarChart("#detail-panel2", index, modi);
-            drawKwhBar(array, index, modi);
+            drawKwhBar(array, index, modi, color[1]);
           }
           else { console.log("Error");} 
         }
@@ -1412,7 +1411,7 @@ function polygonInteraction (selection, pointer, color, max, min, modi, data) {
           || (modi == "kwhfuenfphh")
           || (modi == "wohndichte")) {
           var name = d3.select(this).attr("name");
-          exitKwhBar(array, index, modi, name);
+          exitKwhBar(array, index, modi, name, color[1]);
         }
         if ((modi == "einwohner")
           || (modi == "allphh")
