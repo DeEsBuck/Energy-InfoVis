@@ -161,11 +161,11 @@ function valuesDetails (data) {
     sumFivePhh[j] = fivePhh[j]*energyPhh[4];
 
     // Check if really needed 86 rows
-    avgOnePhh[j] = sumOnePhh[j] / _onePhh[j];
-    avgTwoPhh[j] = sumTwoPhh[j] / _twoPhh[j];
-    avgThreePhh[j] = sumThreePhh[j] / _threePhh[j];
-    avgFourPhh[j] = sumFourPhh[j] / _fourPhh[j];
-    avgFivePhh[j] = sumFivePhh[j] / _fivePhh[j];
+    avgOnePhh[j] = sumOnePhh[j] / onePhh[j];
+    avgTwoPhh[j] = sumTwoPhh[j] / twoPhh[j]*2;
+    avgThreePhh[j] = sumThreePhh[j] / threePhh[j]*3;
+    avgFourPhh[j] = sumFourPhh[j] / fourPhh[j]*4;
+    avgFivePhh[j] = sumFivePhh[j] / fivePhh[j]*5;
     
   }
 
@@ -1485,7 +1485,7 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
   if (error) throw error;
 
   valuesDetails(data);
-  initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
+  initMap(data, resident, linearGreen, d3.max(resident), d3.min(resident), "einwohner");
   legende(resident, "linear", linearGreen, "Einwohneranzahl", 0);
   allCityBarChart(data, "#detail-panel3", "Einwohneranzahl");
 
@@ -1493,14 +1493,14 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
     switch (index) {
       case "0": 
         legende(resident, "linear", linearGreen, "Einwohneranzahl", 0);
-        initMap(data, resident, linearGreen, 41814, 1084, "einwohner");
+        initMap(data, resident, linearGreen, d3.max(resident), d3.min(resident), "einwohner");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Einwohneranzahl");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "1":
         legende(diversity, "linear", linearRed, "Wohndichte", 1);
-        initMap(data, diversity, linearRed, 13606, 170, "wohndichte");
+        initMap(data, diversity, linearRed, d3.max(diversity), d3.min(diversity), "wohndichte");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Einwohner pro qkm");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
@@ -1509,12 +1509,12 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
         legende(energyHeadSumPhh, "linear", linearLila, "Stromverbrauch pro Kopf", 2);
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Durchschnitt Einwohner");        
-        initMap(data, energyHeadSumPhh, linearLila, 1722, 1338, "kwhhead");
+        initMap(data, energyHeadSumPhh, linearLila, d3.max(energyHeadSumPhh), d3.min(energyHeadSumPhh), "kwhhead");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "3":
         legende(sumPhh, "linear", linearPink, "Gesamt Haushaltsgroessen", 3);
-        initMap(data, sumPhh, linearPink, 25105, 459, "allphh");
+        initMap(data, sumPhh, linearPink, d3.max(sumPhh), d3.min(sumPhh), "allphh");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Anzahl der Haushalte");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
@@ -1522,41 +1522,41 @@ d3.csv("data/2012-haushaltsgroesse-statdteil.csv", function (error, data) {
       case "4":
         legende(energySumPhh, "linear", linearOrange, "Gesamt Stromverbrauch", 4);
         removeAllBarChart("#detail-panel3");
-        initMap(data, energySumPhh, linearOrange, 65481260, 1588240, "kwhallphh");
+        initMap(data, energySumPhh, linearOrange, d3.max(energySumPhh), d3.min(energySumPhh), "kwhallphh");
         allCityBarChart(data, "#detail-panel3", "Gesamtanzahl pro Haushalt");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "5":
         legende(sumOnePhh, "linear", linearBlue, "Stromverbrauch Ein-PHH", 5);
-        initMap(data, sumOnePhh, linearBlue, 35009900, 264450, "kwheinphh");
+        initMap(data, sumOnePhh, linearBlue, d3.max(sumOnePhh), d3.min(sumOnePhh), "kwheinphh");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Anzahl Ein-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "6":
         legende(sumTwoPhh, "linear", linearBlue, "Stromverbrauch Zwei-PHH", 6);
-        initMap(data, sumTwoPhh, linearBlue, 18758320, 505680, "kwhzweiphh");
+        initMap(data, sumTwoPhh, linearBlue, d3.max(sumTwoPhh), d3.min(sumTwoPhh), "kwhzweiphh");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Anzahl Zwei-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "7":
         legende(sumThreePhh, "linear", linearBlue, "Stromverbrauch Drei-PHH", 7);
-        initMap(data, sumThreePhh, linearBlue, 9481050, 360450, "kwhdreiphh");
+        initMap(data, sumThreePhh, linearBlue, d3.max(sumThreePhh), d3.min(sumThreePhh), "kwhdreiphh");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Anzahl Drei-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "8":
         legende(sumFourPhh, "linear", linearBlue, "Stromverbrauch Vier-PHH", 8);
-        initMap(data, sumFourPhh, linearBlue, 7281750, 361000, "kwhvierphh");
+        initMap(data, sumFourPhh, linearBlue, d3.max(sumFourPhh), d3.min(sumFourPhh), "kwhvierphh");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Anzahl Vier-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
       break;
       case "9":
         legende(sumFivePhh, "linear", linearBlue, "Stromverbrauch Fuenf-PHH", 9);
-        initMap(data, sumFivePhh, linearBlue, 4602090, 96660, "kwhfuenfphh");
+        initMap(data, sumFivePhh, linearBlue, d3.max(sumFivePhh), d3.min(sumFivePhh), "kwhfuenfphh");
         removeAllBarChart("#detail-panel3");
         allCityBarChart(data, "#detail-panel3", "Anzahl Fuenf-PHH");
         d3.selectAll("#tab2").selectAll(".note").style("display", "block");
