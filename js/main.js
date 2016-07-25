@@ -34,7 +34,7 @@ var red = d3.rgb(222,45,38);
 var selectedColor = d3.rgb(129,15,124);
 var linearGreen = [d3.rgb(255,255,204),d3.rgb(0,109,44)];
 var linearRed = [d3.rgb(254,240,217),d3.rgb(179,0,0)];
-var linearBlue = [d3.rgb(246,239,247),d3.rgb(1,108,89)];
+var linearBlue = [d3.rgb(236,231,242),d3.rgb(43,140,190)];
 var linearGray = [d3.rgb(240,240,240),d3.rgb(99,99,99)];
 var linearPink = [d3.rgb(241,238,246), d3.rgb(152,0,67)];
 var linearOrange = [d3.rgb(255,255,212),d3.rgb(153,52,4)];
@@ -435,6 +435,7 @@ function allCityBarChart (data, panelName, modi, index) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   if (modi == "Einwohneranzahl") {
+    var colorOrdinal = linearGreen[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -452,6 +453,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Einwohner pro qkm") {
+    var colorOrdinal = linearRed[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -469,6 +471,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Gesamtanzahl pro Haushalt") {
+    var colorOrdinal = linearOrange[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -499,6 +502,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Durchschnitt Einwohner") {
+    var colorOrdinal = linearLila[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -516,6 +520,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Anzahl Ein-PHH") {
+    var colorOrdinal = linearBlue[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -533,6 +538,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Anzahl Zwei-PHH") {
+    var colorOrdinal = linearBlue[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -550,6 +556,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Anzahl Drei-PHH") {
+    var colorOrdinal = linearBlue[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -567,6 +574,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Anzahl Vier-PHH") {
+    var colorOrdinal = linearBlue[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -584,6 +592,7 @@ function allCityBarChart (data, panelName, modi, index) {
     });
   }
   else if (modi == "Anzahl Fuenf-PHH") {
+    var colorOrdinal = linearBlue[1];
     var phhName = d3.keys(data[0])
     .filter(function(key) { 
       return key !== "number"
@@ -656,7 +665,7 @@ function allCityBarChart (data, panelName, modi, index) {
       .attr("x", function(d) { return x1(d.name); })
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return colorOrdinal(d.name); })
+      .style("fill", function(d) { return modi == "Anzahl der Haushalte" ? colorOrdinal(d.name) : colorOrdinal; })
       .append("title")
       .text(function(d) {return new Intl.NumberFormat().format(d.value)});   
 

@@ -48,14 +48,14 @@ h3, h4 {
 	margin-left: 20px;
 }
 
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 360px) {
 	#second-panel {
 		width: 100%;
 		margin-right: 0px;
 	}
 }
 
-@media screen and (min-width: 992px) and (max-width: 1200px) {
+@media screen and (min-width: 361px) and (max-width: 1200px) {
 	body {
 		overflow: auto;
 	}
@@ -173,6 +173,10 @@ h3, h4 {
 	padding: 5px;
 	margin-bottom: 10px;
 	background-color: #fff;
+}
+
+#numbers-panel {
+	border-top: solid #ccc 1px;
 }
 
 #detail-panel,
