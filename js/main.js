@@ -1237,11 +1237,11 @@ function exitKwhBar (array, index, modi, name, color) {
 
   var xScale = d3.scale.ordinal()
     .domain(array.map(function(d) { return d.length; }))
-    .rangeBands([0, width], .05);
+    .rangeBands([0, width]);
   
   var x = d3.scale.ordinal()
     .domain(phhCityName)
-    .rangeBands([0, xScale.rangeBand()]);
+    .rangeBands([0, xScale.rangeBand()], .05);
 
   var y = d3.scale.linear()
     .domain([0, d3.max(array, function(d) { 
