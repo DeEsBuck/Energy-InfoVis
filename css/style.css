@@ -167,7 +167,9 @@ h3, h4 {
 	clear: both;
 	width: 100%;
 	min-height: 200px;
-	border: solid #ccc 1px;
+	border-left: solid #ccc 1px;
+	border-right: solid #ccc 1px;
+	border-bottom: solid #ccc 1px;
 	padding: 5px;
 	margin-bottom: 10px;
 	background-color: #fff;
@@ -186,8 +188,14 @@ h3, h4 {
 }
 
 #myTabs {
-	margin-bottom: 10px;
 	background-color: #fff;	
+}
+
+.nav-tabs > li.active > a, 
+.nav-tabs > li.active > a:hover, 
+.nav-tabs > li.active > a:focus {
+	color: #e3311e !important;
+	background-color: #ddd !important;
 }
 
 .left-section, 
