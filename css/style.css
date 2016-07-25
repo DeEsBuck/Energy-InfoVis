@@ -198,6 +198,10 @@ h3, h4 {
 	background-color: #ddd !important;
 }
 
+.nav-tabs.nav-justified > li > a {
+	border-bottom: solid #ccc 1px !important;
+}
+
 .left-section, 
 .right-section {
 	width: 50%;
