@@ -114,6 +114,12 @@ function removeBarByName (panelName, name) {
 }
 
 function valuesDetails (data) {
+  // TODO Verbrauch pro Kopf (kWh) Rechnungsfehler, vgl cityEnergyHead mit groupEnergyHead
+  for (var k = 0; k < countPhh(data).length; k++) {
+    energyheadPhh[k] = energyPhh[k]/(k+1);
+    cityEnergy += countPhh(data)[k]*[k+1]*energyheadPhh[k]; 
+  }
+
   for (var j = 0; j < data.length; j++) {
     cityPhh += +data[j]["sumphh"];
     allResidents += +data[j]["einwohner"];
@@ -134,25 +140,25 @@ function valuesDetails (data) {
     fourPhh.push(+data[j]["vierphh"]);
     fivePhh.push(+data[j]["funfphh"]); 
 
-    energyHeadSumPhh.push(Math.round(((
-      onePhh[j]*energyheadPhh[0]+
-      twoPhh[j]*2*energyheadPhh[1]+
-      threePhh[j]*3*energyheadPhh[2]+
-      fourPhh[j]*4*energyheadPhh[3]+
-      fivePhh[j]*5*energyheadPhh[4])/resident[j]) * 100) / 100);
-
-    energySumPhh.push(
-      onePhh[j]*energyheadPhh[0]+
-      twoPhh[j]*2*energyheadPhh[1]+
-      threePhh[j]*3*energyheadPhh[2]+
-      fourPhh[j]*4*energyheadPhh[3]+
-      fivePhh[j]*5*energyheadPhh[4]);
-
     _onePhh[j] = onePhh[j];
     _twoPhh[j] = twoPhh[j]*2;
     _threePhh[j] = threePhh[j]*3;
     _fourPhh[j] = fourPhh[j]*4;
-    _fivePhh[j] = fivePhh[j]*5;
+    _fivePhh[j] = resident[j] - (_onePhh[j]+_twoPhh[j]+_threePhh[j]+_fourPhh[j]);
+
+    energyHeadSumPhh.push(Math.round(((
+      _onePhh[j]*energyheadPhh[0]+
+      _twoPhh[j]*energyheadPhh[1]+
+      _threePhh[j]*energyheadPhh[2]+
+      _fourPhh[j]*energyheadPhh[3]+
+      _fivePhh[j]*energyheadPhh[4])/resident[j]) * 100) / 100);
+
+    energySumPhh.push(
+      _onePhh[j]*energyheadPhh[0]+
+      _twoPhh[j]*energyheadPhh[1]+
+      _threePhh[j]*energyheadPhh[2]+
+      _fourPhh[j]*energyheadPhh[3]+
+      _fivePhh[j]*energyheadPhh[4]);
 
     sumOnePhh[j] = onePhh[j]*energyPhh[0];
     sumTwoPhh[j] = twoPhh[j]*energyPhh[1];
@@ -161,18 +167,12 @@ function valuesDetails (data) {
     sumFivePhh[j] = fivePhh[j]*energyPhh[4];
 
     // Check if really needed 86 rows
-    avgOnePhh[j] = sumOnePhh[j] / onePhh[j];
-    avgTwoPhh[j] = sumTwoPhh[j] / twoPhh[j]*2;
-    avgThreePhh[j] = sumThreePhh[j] / threePhh[j]*3;
-    avgFourPhh[j] = sumFourPhh[j] / fourPhh[j]*4;
-    avgFivePhh[j] = sumFivePhh[j] / fivePhh[j]*5;
+    avgOnePhh[j] = (_onePhh[j] * energyheadPhh[0]) / _onePhh[j];
+    avgTwoPhh[j] = (_twoPhh[j] * energyheadPhh[1]) / _twoPhh[j];
+    avgThreePhh[j] = (_threePhh[j] * energyheadPhh[2]) / _threePhh[j];
+    avgFourPhh[j] = (_fourPhh[j] * energyheadPhh[3]) / _fourPhh[j];
+    avgFivePhh[j] = (_fivePhh[j] * energyheadPhh[4]) / _fivePhh[j];
     
-  }
-
-  // TODO Verbrauch pro Kopf (kWh) Rechnungsfehler, vgl cityEnergyHead mit groupEnergyHead
-  for (var k = 0; k < countPhh(data).length; k++) {
-    energyheadPhh[k] = energyPhh[k]/(k+1);
-    cityEnergy += countPhh(data)[k]*[k+1]*energyheadPhh[k]; 
   }
 
   cityEnergyHead = cityEnergy / allResidents;
@@ -899,7 +899,7 @@ function exitGroupBar (data, index, modi, name) {
   svgPhhBar.enter()
       .append("rect")
       .attr("width", x1.rangeBand())
-      .attr("x", function(d) { return x1(d.name); })
+      .attr("x", function(d,i) {return i%5 == 0 ? x1(d.name)+3 : x1(d.name)})
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
       .style("fill", function(d) { return colorOrdinal(d.name); })
@@ -915,91 +915,11 @@ function exitGroupBar (data, index, modi, name) {
   svgPhhBar //Update
     .attr("x", function(d,i) {return i%5 == 0 ? x1(d.name)+3 : x1(d.name)})
     .attr("y", function(d) {return y(d.value)})
-    .attr("width",  x1.rangeBand())
+    .attr("width",  function(d,i) {return i%5 == 0 ? x1.rangeBand()-3 : x1.rangeBand() })
     .attr("height", function(d) {return height - y(d.value)});
 
   return svgPhhBar;
 }
-
-function createPhhBar (modi, panelName, array, index) {
-  var data = array[0];
-  var colorOrdinal = d3.scale.ordinal()
-    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']);
-
-  array.forEach(function (d) {
-    d.phhValue = phhName.map(function (name) {
-      return {name: name, value: +d[name][index]};
-    });
-  });
-
-  var xScale = d3.scale.ordinal()
-    .domain(array.map(function(d) { return d.length; }))
-    .rangeBands([0, width], 0);
-
-  var x = d3.scale.ordinal()
-    .domain(phhName)
-    .rangeBands([0, xScale.rangeBand()]);
-
-  var y = d3.scale.linear()
-   .domain([0, d3.max(array, function(d) { 
-    return d3.max(d.phhValue, function(d) { 
-      return d.value; 
-    }); 
-  })])
-  .range([height, 0]);
-
-  var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(d3.format(".2s"));
-
-  var svg = d3.select(panelName).append("svg")
-    .attr("barid", index+"-"+modi)
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
- var phh = svg.selectAll(".phh")
-    .data(array)
-    .enter()
-    .append("g")
-    .attr("class", "phh")
-    .attr("transform", function(d, i) { return "translate(" + xScale(d.modi) + ",0)"; });
-
-  var rect = phh.selectAll("rect")
-    .data(function(d) { return d.phhValue; })
-    .enter()
-    .append("rect")
-    .attr("x", function(d) {return x(d.name)})
-    .attr("y", function(d) {return y(d.value)})
-    .attr("width",  x.rangeBand())
-    .attr("height", function(d) {return height - y(d.value)})
-    .attr("fill",function(d) { return colorOrdinal(d.name)})
-    .append("title")
-    .text(function(d) {return new Intl.NumberFormat().format(d.value)});  
-
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-    .append("text")
-    .attr("x", 0)
-    .attr("y", -10)
-    .style("text-anchor", "start")
-    .text(data["stadtteil"][index]+", Modus: "+modi);
-
-    return rect;
-}
-
 
 function createBar (modi, panelName, array, index, color) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -1080,7 +1000,7 @@ var xAxis = d3.svg.axis()
   return svg;
 }
 
-function createkwhPhhBar(modi, panelName, array, index) { 
+function initkwhPhhBar(modi, panelName, array, index) { 
   array.forEach(function (d) {
     d.phhCityValue = phhCityName.map(function (name,i) {
       return {name: name, value: phhCityValue[i]};
@@ -1193,7 +1113,7 @@ function drawKwhBar(array, index, modi, color) {
 
   if (toString.call(svgKwhPhhBar) !== "[object Array]") {
     removeAllBarChart("#detail-panel2");
-    var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel2", array, index);
+    var svgKwhPhhBar = initkwhPhhBar(modi, "#detail-panel2", array, index);
   } 
 
   svgKwhPhhBar.enter()
@@ -1253,7 +1173,7 @@ function exitKwhBar (array, index, modi, name, color) {
 
   if (toString.call(svgKwhPhhBar) !== "[object Array]") {
     removeAllBarChart("#detail-panel2");
-    var svgKwhPhhBar = createkwhPhhBar(modi, "#detail-panel2", array, index);
+    var svgKwhPhhBar = initkwhPhhBar(modi, "#detail-panel2", array, index);
   } 
 
   svgKwhPhhBar.enter()
