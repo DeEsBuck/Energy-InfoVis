@@ -9,6 +9,9 @@ Einfacher ist es das CDN im Header auskommentieren, da ich lokal mit den nodejs 
 
 Also in Zeile 5 der index.html `<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>` aktivieren.
 
+Wer ohne Nodejs die Anwendung lokat testen möchte, empfehle ich XAMPP oder einer seiner Derivate.
+
+
 In Zukunft werde ich ein builder vorbereiten, um z.B. auf Heroku oder andere Systeme deployen zu können.
 
 ---
@@ -20,8 +23,6 @@ Für die Legende habe ich das Framework von https://github.com/jgoodall/d3-colorl
 
 die Stadtkarte ist aus https://upload.wikimedia.org/wikipedia/commons/f/f3/Cologne_subdivisions.svg
  entnommen und leicht modifiziert worden.
-
- ---
 
  ### Demo
  Eine Momentaufnahme des aktuellen Entwicklungsstand kann hier getestet werden http://dsb.dsbuck.de/

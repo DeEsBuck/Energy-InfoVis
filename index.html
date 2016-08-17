@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <head>
     <link rel="icon" href="cologne-stadtteile.ico" type="image/x-icon" />
-	<script src="d3/d3.js"></script>
-    <!--<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+	<!--<script src="d3/d3.js"></script>-->
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<link href="css/style.css" rel="stylesheet">
 	<!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet">
@@ -17,7 +17,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-5 col-sm-9">
+            <div class="col-md-7 col-xs-9">
                 <div id="head">
                     <h1>Der Stromverbrauch privater Haushalte in den Stadtteilen K&ouml;lns</h1>
                     <h2>Gestaltung einer Informationsvisualisierung zur Untersuchung des Stromverbrauchs privater Haushalte in den jeweiligen Stadtteilen K&ouml;lns</h2>
@@ -25,12 +25,12 @@
             </div>
         </div>
         <div class="row"> 
-            <div class="col-lg-6 col-md-12">   
+            <div class="col-lg-6">   
                 <div id="main-panel">
 
                 </div>
             </div>
-            <div class="col-lg-6 col-md-12"> 
+            <div class="col-lg-6"> 
                 <div id="second-panel">
                     <div id="modi-panel">
                         <h2>Stadtkarten Modifikation (Alle Werte sind pro Stadtteil)</h2>
@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="radio">
                                     <label class="radio-inline" for="radio-3-hhgroessen">
-                                        <input name="modi" id="radio-3-hhgroessen" type="radio" value="3" />Summe aller Haushaltsgr&ouml;&szlig;en
+                                        <input name="modi" id="radio-3-hhgroessen" type="radio" value="3" />Gesamt Haushaltsgr&ouml;&szlig;en
                                     </label>
                                 </div>
                                 <div class="radio">
@@ -113,7 +113,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="gesamtverbrauch">
-                                        Summe Stromverbrauch <small>(kWh)</small>
+                                        Stromverbrauch <small>(kWh)</small>
                                     </label>
                                     <input class="form-control" name="kennzahlen" id="gesamtverbrauch" type="text" value="0" size="10" readonly />
                                 </div>
@@ -137,7 +137,7 @@
                                 </div>
                             </div>
                             <div class="right-section">
-                                <h2>Kennzahlen der Auswahl</h2>    
+                                <h2>Kennzahlen: addiert Auswahl</h2>    
                                 <div class="form-group"> 
                                     <label for="einwohneranzahl">
                                         Einwohneranzahl
@@ -146,7 +146,7 @@
                                 </div>
                                 <div class="form-group">    
                                     <label for="stromverbrauch">
-                                        Summe Stromverbrauch <small>(kWh)</small>
+                                        Stromverbrauch <small>(kWh)</small>
                                     </label>
                                     <input class="form-control" name="kennzahlen" id="stromverbrauch" type="text" value="0" size="10" readonly />
                                 </div>
@@ -171,34 +171,43 @@
                             </div>    
                         </form>
                     </div>
-                    <ul class="nav nav-pills" id="myTabs" role="tablist">
+                    <ul class="nav nav-tabs nav-justified" id="myTabs" role="tablist">
                         <li role="presentation" class="active">
                             <a href="#tab1" role="tab" data-toggle="tab">
-                                Direkt Vergleich nach Auswahl
+                                Gesammelte Auswahl
                             </a>
                         </li>
                         <li role="presentation">
                             <a href="#tab2" role="tab" data-toggle="tab">
-                                Vergleich der Auswahl nach Haushaltsgr&ouml;&szlig;en
+                                Auswahl Detail Haushaltsgr&ouml;&szlig;en
                             </a>
                         </li>
                         <li role="presentation">
                             <a href="#tab3" role="tab" data-toggle="tab">
-                                Stromverbrauch je PHH in kWh
+                                &Uuml;bersicht Stadtteile
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="tab1">
                             <div id="detail-panel">
+                                <input type="button" class="reset btn btn-default" value="reset">
+                                <div class="note">
+                                    Bitte die Stadtteile in der Karte ausw&auml;hlen.
+                                </div>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="tab2">
                             <div id="detail-panel2">
+                                <input type="button" class="reset btn btn-default" value="reset">
+                                <div class="note">
+                                    Bitte die Stadtteile in der Karte ausw&auml;hlen.
+                                </div>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="tab3">
                             <div id="detail-panel3">
+                                
                             </div>
                         </div>
                     </div>
